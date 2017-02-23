@@ -5,7 +5,7 @@
       <div class="inner-specs">
           <div class="left-specs">
               <p class="brand">Manufacturer: <%= sysInfo[:mfr] %></p>
-              <p class="model">Model: <%= sysInfo[:model] %></p>
+              <p class="model">Model: <%= sysInfo[:model] %> (<%= sysInfo[:version] %>)</p>
               <p class="serial">Serial: <%= sysInfo[:serial]%></p>
           </div>
           <div class="right-specs">
