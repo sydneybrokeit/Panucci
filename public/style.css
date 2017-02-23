@@ -1,0 +1,113 @@
+body {
+    font-family: sans-serif;
+    background-color: #fafafa;
+    color: white;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+* {
+    padding: 0;
+    margin: 0;
+
+}
+
+.intro-header {
+    width: 100%;
+    margin: 0 auto;
+    padding: 25px;
+    background-color: #66ccff;
+}
+
+.intro-header h1 {
+    font-size: 55px;
+    font-weight: 100;
+    margin-left: 25px;
+}
+
+.subcards{
+  width: 81%;
+  display: flex;
+  margin: 0 auto;
+      padding: 12px;
+      align-items: flex-start;
+      flex-direction: row;
+
+}
+
+.card h1 {
+    font-weight: 100;
+}
+
+.card {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    flex-grow: 1;
+    display: flex;
+    align-self: flex-start;
+    margin: 0 auto;
+    padding: 24px;
+    background-color: white;
+    text-align: center;
+    color: black;
+    margin-top: 25px;
+}
+
+.card h2 {
+    font-weight: 100;
+    font-size: 25px;
+    flex-grow: 1;
+}
+.card .fa-right{
+  text-align: right;
+  font-size: 5em;
+
+}
+
+.harddrive{
+  margin-right: 10px;
+}
+.card .specs{
+  flex-grow: 1;
+  text-align: left;
+  padding-left: 24px;
+  padding-top: 10px;
+}
+.green {
+    color: #43A047;
+}
+
+.red {
+    color: #E53935;
+}
+
+.main-specs h1, p {
+    margin-left: 25px;
+    text-align: left;
+}
+
+.main-specs .left-specs p{
+  font-size: 18px;
+  display: block;
+  padding-left: 12px;
+  border-left: 5px solid #009688;
+  color: #009688;
+}
+.main-specs .left-specs{
+  flex-grow: 2;
+}
+.main-specs .right-specs{
+  float: right;
+}
+.inner-specs{
+  display: flex;
+}
+.main-specs{
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+  width: 80%;
+  margin: 0 auto;
+  padding: 12px;
+  background-color: white;
+  margin-top: 25px;
+  text-align: center;
+  color: black;
+}

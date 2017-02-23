@@ -1,6 +1,36 @@
-<p>MMX: <%= mmxTest %>
-<p>SSE: <%= sseTest %>
-<p>SSE2: <%= sse2Test %>
-<p>SSE3: <%= sse3Test %>
-<p>Memory Test Size: <%= memTestAmt %> MB
-<p>Memory Test Status: <%= memoryStatus%>
+
+  <div class="main-specs">
+      <h1>System Information:</h1>
+      <div class="inner-specs">
+          <div class="left-specs">
+              <p class="serial">Serial: 1307-80578718</p>
+              <p class="brand">Brand: HP</p>
+          </div>
+          <div class="right-specs">
+            <p>MMX: <%= mmxTest %>
+            <p>SSE: <%= sseTest %>
+            <p>SSE2: <%= sse2Test %>
+            <p>SSE3: <%= sse3Test %>
+          </div>
+      </div>
+  </div>
+  <div class="subcards">
+      <div class="harddrive card">
+          <i class="fa fa-hdd-o fa-5x fa-left"></i>
+          <div class="specs">
+              <h1>Hard Drive</h1>
+
+              <h2 class="size">Size: 500GB</h2>
+          </div>
+          <i class="fa fa-times fa-3x red fa-right"></i>
+      </div>
+      <div class="memory card">
+          <i class="fa fa-microchip fa-5x fa-left"></i>
+          <div class="specs">
+              <h1>Memory</h1>
+
+              <h2 class="size">Amount: <%= memTestAmt %> MB</h2>
+          </div>
+          <i class="fa fa-check fa-3x green fa-right"><%= memoryStatus%></i>
+      </div>
+  </div>
