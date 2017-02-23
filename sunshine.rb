@@ -29,7 +29,7 @@ def getFreeMemory
 end
 
 
-memTestAmt = (getFreeMemory * 0.7).floor
+memTestAmt = (getFreeMemory * 0.05).floor
 totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i/1024.0/1024
 totalRam = totalRam.round
 memoryStatus = Tempfile.new('memStatus')
