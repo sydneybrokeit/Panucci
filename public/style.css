@@ -88,7 +88,8 @@ body {
 .main-specs .left-specs p{
   font-size: 18px;
   display: block;
-  padding-left: 12px;
+  margin-left: 0;
+  padding-left: 8px;
   border-left: 5px solid #009688;
   color: #009688;
 }
@@ -99,8 +100,12 @@ body {
   float: right;
 }
 .main-specs .fa{
-  width: 100%;
   font-size: 5em;
+  width: auto;
+    float: left;
+    padding: 8px;
+    margin-right: 12px;
+    margin-left: -2px;
 }
 .inner-specs{
   display: flex;
