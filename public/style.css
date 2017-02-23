@@ -112,7 +112,6 @@ pre{
     margin-left: -2px;
 }
 
-
 .inner-specs{
   display: flex;
 }
@@ -125,4 +124,10 @@ pre{
   margin-top: 25px;
   text-align: center;
   color: black;
+}
+
+
+.fa-spin {
+  -webkit-animation: fa-spin 2s infinite ease-in-out!important;
+  animation: fa-spin 2s infinite ease-in-out!important;
 }

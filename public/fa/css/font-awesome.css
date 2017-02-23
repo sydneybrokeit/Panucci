@@ -90,8 +90,8 @@
   margin-left: .3em;
 }
 .fa-spin {
-  -webkit-animation: fa-spin 2s infinite linear;
-  animation: fa-spin 2s infinite linear;
+  -webkit-animation: fa-spin 2s infinite ease-in-out;
+  animation: fa-spin 2s infinite ease-in-out;
 }
 .fa-pulse {
   -webkit-animation: fa-spin 1s infinite steps(8);
