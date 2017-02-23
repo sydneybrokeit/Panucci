@@ -33,16 +33,16 @@ memTestPID = fork do
 end
 
 hddStatus= Tempfile.new('hddStatus')
-  hddStatus.write("Testing in Progress")
-hddTestPID = fork do
+hddStatus.write("Testing in Progress")
 
-end
 
 
 get '/' do
   memoryStatus.rewind
+  hddStatus.rewind
   erb :test, :locals => {
     :memTestAmt => memTestAmt,
-    :memoryStatus => memoryStatus.read}
+    :memoryStatus => memoryStatus.read,
+    :hddStatus => hddStatus.read}
 
 end
