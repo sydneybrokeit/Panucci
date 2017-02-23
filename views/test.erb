@@ -4,14 +4,11 @@
       <h1>System Information:</h1>
       <div class="inner-specs">
           <div class="left-specs">
-              <p class="serial">Serial: 1307-80578718</p>
-              <p class="brand">Brand: HP</p>
+              <p class="brand">Manufacturer: <%= sysInfo[:mfr] %></p>
+              <p class="model">Model: <%= sysInfo[:model] %></p>
+              <p class="serial">Serial: <%= sysInfo[:serial]%></p>
           </div>
           <div class="right-specs">
-            <p>MMX:<i class="<%= mmxTest %>"></i></p>
-            <p>SSE: <i class="<%= sseTest %>"></i></p>
-            <p>SSE2:<i class="<%= sse2Test %>"></i></p>
-            <p>SSE3:  <i class="<%= sse3Test %>"></i></p>
           </div>
       </div>
   </div>
@@ -30,7 +27,7 @@
           <div class="specs">
               <h1>Memory</h1>
 
-              <h2 class="size">Amount: <%= memTestAmt %> MB</h2>
+              <h2 class="size">Total RAM:  <%= totalRam %>GB</h2>
           </div>
           <i class="fa fa-check fa-3x green fa-right"><%= memoryStatus%></i>
       </div>

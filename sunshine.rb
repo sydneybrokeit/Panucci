@@ -13,6 +13,14 @@ class FalseClass
   end
 end
 
+def getSysInfo
+  sysInfo = {}
+  sysInfo[:serial] = `sudo dmidecode --type 1 | grep Serial | sed 's/\tSerial Number: //'`.chomp
+  sysInfo[:mfr] = `sudo dmidecode --type 1 | grep Manufacturer | sed 's/\tManufacturer: //'`.chomp
+  sysInfo[:model] = `sudo dmidecode --type 1 | grep "Product Name:" | sed 's/\tProduct Name: //'`.chomp
+  return sysInfo
+end
+
 def getFreeMemory
   freeMem = %x[cat /proc/meminfo | grep MemFree]
   freeMem = freeMem.scan(/\d*/).join('').to_i/(1024.0)
@@ -20,33 +28,9 @@ def getFreeMemory
 end
 
 
-  if mmxTest == "PASS"
-    mmxTest = "fa fa-check green"
-  else
-    mmxTest = "fa fa-times red"
-  end
-
-  if sseTest == "PASS"
-    sseTest = "fa fa-check green"
-  else
-    sseTest = "fa fa-times red"
-  end
-  if sse2Test == "PASS"
-    sse2Test = "fa fa-check green"
-  else
-    sse2Test = "fa fa-times red"
-  end
-
-  if sse3Test == "PASS"
-    sse3Test = "fa fa-check green"
-  else
-    sse3Test = "fa fa-times red"
-  end
-
-
-
 memTestAmt = (getFreeMemory * 0.7).floor
-
+totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i/1024.0/1024
+totalRam = totalRam.round
 memoryStatus = Tempfile.new('memStatus')
 memoryStatus.write("Testing In Progress")
 memTestPID = fork do
@@ -60,14 +44,15 @@ end
 hddStatus= Tempfile.new('hddStatus')
 hddStatus.write("Testing in Progress")
 
-
+sysInfo = getSysInfo
 
 get '/' do
   memoryStatus.rewind
   hddStatus.rewind
   erb :test, :locals => {
-    :memTestAmt => memTestAmt,
+    :totalRam => totalRam,
     :memoryStatus => memoryStatus.read,
-    :hddStatus => hddStatus.read}
+    :hddStatus => hddStatus.read,
+    :sysInfo => sysInfo}
 
 end
