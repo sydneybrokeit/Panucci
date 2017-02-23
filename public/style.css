@@ -72,6 +72,10 @@ body {
   padding-left: 24px;
   padding-top: 10px;
 }
+pre{
+  font-family: monospace;
+  text-align: center;
+}
 .green {
     color: #43A047;
 }
@@ -107,6 +111,8 @@ body {
     margin-right: 12px;
     margin-left: -2px;
 }
+
+
 .inner-specs{
   display: flex;
 }
