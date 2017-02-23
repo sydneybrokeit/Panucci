@@ -19,30 +19,29 @@ def getFreeMemory
   return freeMem
 end
 
-mmxTest = system('cat /proc/cpuinfo | grep mmx').passfail
-sseTest = system('cat /proc/cpuinfo | grep sse').passfail
-sse2Test = system('cat /proc/cpuinfo | grep sse2').passfail
-sse3Test = system('cat /proc/cpuinfo | grep ssse3').passfail
 
 memTestAmt = (getFreeMemory * 0.7).floor
 
 memoryStatus = Tempfile.new('memStatus')
 memoryStatus.write("Testing In Progress")
 memTestPID = fork do
-  status = system("sudo memtester #{memTestAmt.to_s} 1")
+  status = system("sudo memtester #{memTestAmt.to_s} 1").passfail
   memoryStatus.rewind
-  memoryStatus.write("#{status.passfail}")
+  memoryStatus.write("#{status}")
   memoryStatus.truncate(status.length)
   exit
+end
+
+hddStatus= Tempfile.new('hddStatus')
+  hddStatus.write("Testing in Progress")
+hddTestPID = fork do
+
 end
 
 
 get '/' do
   memoryStatus.rewind
-  erb :test, :locals => {:mmxTest => mmxTest,
-    :sseTest => sseTest,
-    :sse2Test => sse2Test,
-    :sse3Test => sse3Test,
+  erb :test, :locals => {
     :memTestAmt => memTestAmt,
     :memoryStatus => memoryStatus.read}
 
