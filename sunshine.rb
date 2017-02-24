@@ -28,6 +28,11 @@ def getFreeMemory
   return freeMem
 end
 
+#enable SMART on drive
+smartSupport = system("sudo smartctl --smart=on /dev/sda")
+#run Conveyance SMART test
+
+
 
 memTestAmt = (getFreeMemory * 0.05).floor
 totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i/1024.0/1024
@@ -44,6 +49,20 @@ end
 
 hddStatus= Tempfile.new('hddStatus')
 hddStatus.write("Testing in Progress")
+if smartSupport == true
+  hddTestPID = fork do
+    waitForShortTest = `sudo smartctl -t short /dev/sda | grep Please | sed 's/Please wait //' | sed 's/ minutes for test to complete.//'`.chomp.to_i
+    sleep(150)
+    smartShortStatus = `sudo smartctl -l selftest /dev/sda | grep Short | grep "# 1 "`
+    smartShortPass = smartShortStatus.include? "Completed without error"
+    smartShortPass = smartShortPass.passfail
+  end
+else
+  hddStatus.rewind
+  hddStatus.write("ERROR: SMART Not Supported by Drive")
+end
+
+
 
 sysInfo = getSysInfo
 

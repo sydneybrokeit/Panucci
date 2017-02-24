@@ -42,11 +42,13 @@
     <% else %>
         <i class="fa fa-circle-o-notch fa-spin fa-3x fa-right"></i>
         <% end %>
-        <script type="text/javascript">
-          setTimeout(function () {
-            location.reload();
-            }, 60 * 1000);
-        </script>
+        <% if memoryStatus == "Testing in Progress" || hddStatus == "Testing in Progress" %>
+            <script type="text/javascript">
+            setTimeout(function () {
+              location.reload();
+            }, 6 * 1000);
+            </script>
+        <% end %>
 
     </div>
 </div>
