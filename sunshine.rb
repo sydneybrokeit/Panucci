@@ -56,6 +56,12 @@ if smartSupport == true
     smartShortStatus = `sudo smartctl -l selftest /dev/sda | grep Short | grep "# 1 "`
     smartShortPass = smartShortStatus.include? "Completed without error"
     smartShortPass = smartShortPass.passfail
+
+    hddStatusWrite = smartShortPass
+    hddStatus.rewind
+    hddStatus.write(hddStatusWrite)
+    hddStatus.truncate(hddStatusWrite)
+    exit
   end
 else
   hddStatus.rewind
