@@ -1,3 +1,6 @@
+<%@subtitle='/<span id="small">diagnostics</span>'%>
+<% memGood = false %>
+<% hddGood = false %>
 <div class="main-specs">
     <h1 class="fa fa-desktop"></h1>
     <h1>System Information:</h1>
@@ -22,8 +25,10 @@
         </div>
         <% if hddStatus.include? "FAIL" %>
         <i class="fa fa-times fa-3x red fa-right"></i>
+        <% hddGood = false %>
         <% elsif hddStatus.include? "PASS" %>
         <i class="fa fa-check fa-3x green fa-right"></i>
+        <% hddGood = true %>
     <% else %>
         <i class="fa fa-circle-o-notch fa-spin fa-3x fa-right"></i>
         <% end %>
@@ -36,12 +41,23 @@
                 <%= totalRam %>GB</h2>
         </div>
         <% if memoryStatus.include? "FAIL" %>
+        <% memGood = false %>
         <i class="fa fa-times fa-3x red fa-right"></i>
         <% elsif memoryStatus.include? "PASS" %>
+        <% memGood = true %>
         <i class="fa fa-check fa-3x green fa-right"></i>
     <% else %>
         <i class="fa fa-circle-o-notch fa-spin fa-3x fa-right"></i>
         <% end %>
-
     </div>
+
 </div>
+<% if memGood == true && hddGood == true%>
+<div class="next-step">
+    <a href="/clone" class="fa fa-arrow-right fa-4x green next"></a>
+</div>
+<% else %>
+<div class="next-step">
+    <a disabled="disabled" class="fa fa-arrow-right fa-4x green next" id="disabled"></a>
+</div>
+<% end %>

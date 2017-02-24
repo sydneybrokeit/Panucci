@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'tempfile'
+require 'dotenv/load'
 
 class TrueClass
   def passfail
@@ -12,6 +13,11 @@ class FalseClass
     "FAIL"
   end
 end
+
+def findImagesFor(mfr)
+  imageList = Dir.entries(ENV['IMAGES_DIR'] + "/" + mfr).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'] + "/" + mfr,entry) and !(entry =='.' || entry == '..') }
+end
+globalImageList = Dir.entries(ENV['IMAGES_DIR']).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'],entry) and !(entry =='.' || entry == '..') }
 
 def getSysInfo
   sysInfo = {}
@@ -28,7 +34,7 @@ def getFreeMemory
   return freeMem
 end
 
-
+if ENV['DEBUG'] == true
 memTestAmt = (getFreeMemory * 0.7).floor
 totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i/1024.0/1024
 totalRam = totalRam.round
@@ -45,6 +51,15 @@ end
 hddStatus= Tempfile.new('hddStatus')
 hddStatus.write("Testing in Progress")
 
+else
+  memoryStatus = Tempfile.new('memStatus')
+  memoryStatus.write("PASS")
+  hddStatus= Tempfile.new('hddStatus')
+  hddStatus.write("PASS")
+end
+
+
+
 sysInfo = getSysInfo
 
 get '/' do
@@ -56,4 +71,13 @@ get '/' do
     :hddStatus => hddStatus.read,
     :sysInfo => sysInfo}
 
+end
+get '/clone' do
+  erb :clone, :locals => {
+    :sysInfo => sysInfo}
+end
+get '/images' do
+  erb :images, :locals => {
+    :sysInfo => sysInfo,
+    :globalImageList => globalImageList}
 end
