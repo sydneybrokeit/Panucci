@@ -60,7 +60,7 @@ if smartSupport == true
     hddStatusWrite = smartShortPass
     hddStatus.rewind
     hddStatus.write(hddStatusWrite)
-    hddStatus.truncate(hddStatusWrite)
+    hddStatus.truncate(hddStatusWrite.length)
     exit
   end
 else
