@@ -48,7 +48,7 @@ memTestPID = fork do
 end
 
 hddStatus= Tempfile.new('hddStatus')
-hddStatus.write("Testing in Progress")
+hddStatus.write("Testing In Progress")
 if smartSupport == true
   hddTestPID = fork do
     waitForShortTest = `sudo smartctl -t short /dev/sda | grep Please | sed 's/Please wait //' | sed 's/ minutes for test to complete.//'`.chomp.to_i
