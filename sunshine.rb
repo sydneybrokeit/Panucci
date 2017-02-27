@@ -92,7 +92,7 @@ if smartSupport == true
     sectors = driveSize/512
     numberOfPasses = 30
     randomSeekPattern = Random.rand(((sectors/(n-1))..(sectors/4)))-1
-    for i in 1..n do
+    for i in 1..numberOfPasses do
       testSection = (randomSeekPattern * i ) % (sectors-1)
       puts testSection
       if !(system("sudo dd if=/dev/sda of=/dev/null bs=512 skip=#{testSection} count=128"))
