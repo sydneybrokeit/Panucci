@@ -47,20 +47,50 @@ memTestPID = fork do
   exit
 end
 
+driveSize = `lsblk -b | grep "sda " | grep -oE '[0-9]{3,}'`.chomp.to_i
+humanReadableSize = driveSize/1024.0/1024
+humanReadableSize = humanReadableSize.ceil
 hddStatus= Tempfile.new('hddStatus')
 hddStatus.write("Testing In Progress")
 if smartSupport == true
   hddTestPID = fork do
+    hddTestStatus = true.passfail
     waitForShortTest = `sudo smartctl -t short /dev/sda | grep Please | sed 's/Please wait //' | sed 's/ minutes for test to complete.//'`.chomp.to_i
     sleep(150)
     smartShortStatus = `sudo smartctl -l selftest /dev/sda | grep Short | grep "# 1 "`
     smartShortPass = smartShortStatus.include? "Completed without error"
-    smartShortPass = smartShortPass.passfail
+    if smartShortPass == false
+      hddTestStatus= false.passfail
+      hddStatus.rewind
+      hddStatus.write(hddTestStatus)
+      hddStatus.truncate(hddTestStatus.length)
+      exit
+    end
 
-    hddStatusWrite = smartShortPass
+    selfHealthTest = `sudo smartctl -H /dev/sda | grep overall | sed 's/.*: //'`.chomp
+    if smartShortPass != "PASSED"
+      hddTestStatus= false.passfail
+      hddStatus.rewind
+      hddStatus.write(hddTestStatus)
+      hddStatus.truncate(hddTestStatus.length)
+      exit
+    end
+
+    sectors = driveSize/512
+    numberOfPasses = 30
+    randomSeekPattern = Random.rand(((sectors/(n-1))..(sectors/4)))-1
+    for i in 1..n do
+      testSection = (randomSeekPattern * i ) % (sectors-1)
+      puts testSection
+      if !(system("sudo dd if=/dev/sda of=/dev/null bs=512 skip=#{testSection} count=128"))
+        hddTestStatus = false.passfail
+        break
+      end
+    end
+
     hddStatus.rewind
-    hddStatus.write(hddStatusWrite)
-    hddStatus.truncate(hddStatusWrite.length)
+    hddStatus.write(hddTestStatus)
+    hddStatus.truncate(hddTestStatus.length)
     exit
   end
 else
@@ -79,6 +109,7 @@ get '/' do
     :totalRam => totalRam,
     :memoryStatus => memoryStatus.read,
     :hddStatus => hddStatus.read,
-    :sysInfo => sysInfo}
+    :sysInfo => sysInfo,
+    :humanReadableSize => humanReadableSize}
 
 end
