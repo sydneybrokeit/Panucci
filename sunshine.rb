@@ -71,6 +71,7 @@ if smartSupport == true
     smartShortStatus = `sudo smartctl -l selftest /dev/sda | grep Short | grep "# 1 "`
     smartShortPass = smartShortStatus.include? "Completed without error"
     if smartShortPass == false
+      puts "FAILED AT SHORT SELFTEST"
       hddTestStatus= false.passfail
       hddStatus.rewind
       hddStatus.write(hddTestStatus)
@@ -80,6 +81,7 @@ if smartSupport == true
 
     selfHealthTest = `sudo smartctl -H /dev/sda | grep overall | sed 's/.*: //'`.chomp
     if smartShortPass != "PASSED"
+      puts "FAILED AT HEALTH CHECK"
       hddTestStatus= false.passfail
       hddStatus.rewind
       hddStatus.write(hddTestStatus)
@@ -95,6 +97,7 @@ if smartSupport == true
       puts testSection
       if !(system("sudo dd if=/dev/sda of=/dev/null bs=512 skip=#{testSection} count=128"))
         hddTestStatus = false.passfail
+        puts "FAILED AT DISK SEEK TEST"
         break
       end
     end
