@@ -9,7 +9,6 @@ body {
 * {
     padding: 0;
     margin: 0;
-
 }
 
 .intro-header {
@@ -25,14 +24,13 @@ body {
     margin-left: 25px;
 }
 
-.subcards{
-  width: 81%;
-  display: flex;
-  margin: 0 auto;
-      padding: 12px;
-      align-items: flex-start;
-      flex-direction: row;
-
+.subcards {
+    width: 81%;
+    display: flex;
+    margin: 0 auto;
+    padding: 12px;
+    align-items: flex-start;
+    flex-direction: row;
 }
 
 .card h1 {
@@ -57,25 +55,28 @@ body {
     font-size: 25px;
     flex-grow: 1;
 }
-.card .fa-right{
-  text-align: right;
-  font-size: 5em;
 
+.card .fa-right {
+    text-align: right;
+    font-size: 5em;
 }
 
-.harddrive{
-  margin-right: 10px;
+.harddrive {
+    margin-right: 10px;
 }
-.card .specs{
-  flex-grow: 1;
-  text-align: left;
-  padding-left: 24px;
-  padding-top: 10px;
+
+.card .specs {
+    flex-grow: 1;
+    text-align: left;
+    padding-left: 24px;
+    padding-top: 10px;
 }
-pre{
-  font-family: monospace;
-  text-align: center;
+
+pre {
+    font-family: monospace;
+    text-align: center;
 }
+
 .green {
     color: #43A047;
 }
@@ -84,50 +85,141 @@ pre{
     color: #E53935;
 }
 
-.main-specs h1, p {
+.main-specs h1,.main-specs  p {
     margin-left: 25px;
     text-align: left;
 }
 
-.main-specs .left-specs p{
-  font-size: 18px;
-  display: block;
-  margin-left: 0;
-  padding-left: 8px;
-  border-left: 5px solid #009688;
-  color: #009688;
+.main-specs .left-specs p {
+    font-size: 18px;
+    display: block;
+    margin-left: 0;
+    padding-left: 8px;
+    border-left: 5px solid #009688;
+    color: #009688;
 }
-.main-specs .left-specs{
-  flex-grow: 2;
+
+.main-specs .left-specs {
+    flex-grow: 2;
 }
-.main-specs .right-specs{
-  float: right;
+
+.main-specs .right-specs {
+    float: right;
 }
-.main-specs .fa{
-  font-size: 5em;
-  width: auto;
+
+.main-specs .fa {
+    font-size: 5em;
+    width: auto;
     float: left;
     padding: 8px;
     margin-right: 12px;
     margin-left: -2px;
 }
 
-.inner-specs{
-  display: flex;
-}
-.main-specs{
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-  width: 80%;
-  margin: 0 auto;
-  padding: 12px;
-  background-color: white;
-  margin-top: 25px;
-  text-align: center;
-  color: black;
+.inner-specs {
+    display: flex;
 }
 
+.main-specs {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    width: 80%;
+    margin: 0 auto;
+    padding: 12px;
+    background-color: white;
+    margin-top: 25px;
+    text-align: center;
+    color: black;
+}
+
+#small {
+    font-size: 22px;
+    line-height: 30px;
+}
+
+.next-step {
+    width: 100%;
+    text-align: center;
+}
+
+.next {
+    text-decoration: none;
+    padding: 12px;
+}
+
+#disabled {
+    color: gray;
+}
 
 .fa-spin {
-  -webkit-animation: fa-spin 2s infinite ease-in-out!important;
-  animation: fa-spin 2s infinite ease-in-out!important;
+    -webkit-animation: fa-spin 2s infinite ease-in-out!important;
+    animation: fa-spin 2s infinite ease-in-out!important;
+}
+
+
+/* Cloning Page */
+
+#progress {
+    width: 100%;
+    background-color: lightgray;
+}
+#bar {
+    width: 0%;
+    height: 30px;
+    background-color: green;
+}
+
+#progress-label {
+    text-align: center;
+    /* If you want to center it */
+    line-height: 30px;
+    padding: 2px;
+    /* Set the line-height to the same as the height of the progress bar container, to center it vertically */
+    color: white;
+}
+
+.inner-confirm {
+    margin: 20px;
+}
+
+.inner-select {
+    display: none;
+}
+
+.button {
+    cursor: pointer;
+    padding: 18px;
+    width: 25px;
+    background-color: black;
+}
+
+.cloning h1, p {
+    text-align: center;
+}
+
+.inner-imaging {
+    display: none;
+}
+
+.center {
+    flex-grow: 1;
+    margin: 20px;
+}
+
+.cloning {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    width: 80%;
+    margin: 0 auto;
+    padding: 12px;
+    background-color: white;
+    margin-top: 25px;
+    text-align: center;
+    color: black;
+}
+
+/* Images Page */
+.image-model{
+  text-align: left;
+}
+.card .fa{
+  margin-right: 12px;
 }

@@ -1,0 +1,21 @@
+<% if globalImageList %>
+<%@subtitle='/<span id="small">images/ all </span>'%>
+<% else %>
+<%@subtitle='/<span id="small">images</span>'%>
+<% end %>
+<div class="subcards">
+    <% globalImageList.each do |image| %>
+    <div class="card" id="<%= image %>" onclick="window.location = '../clone?image=<%= image %>'" style="cursor: pointer;">
+      <% windowsVersion=image[/\_(.*?)_/,1] %>
+      <% size=image.partition('_').last.sub!(windowsVersion + "_", "") + "G" %>
+        <i class="fa fa-desktop fa-4x"></i>
+        <div class="inner-card">
+            <h2 class="image-model"><%= image %>,
+                <%=sysInfo[:model]%></h2>
+            <p class="deets"><%= windowsVersion %>, <%= size %> </p>
+        </div>
+    </div>
+    <% end %>
+
+</div>
+</div>

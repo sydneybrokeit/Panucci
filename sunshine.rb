@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'tempfile'
+require 'dotenv/load'
 
 class TrueClass
   def passfail
@@ -12,6 +13,11 @@ class FalseClass
     "FAIL"
   end
 end
+
+def findImagesFor(mfr)
+  imageList = Dir.entries(ENV['IMAGES_DIR'] + "/" + mfr).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'] + "/" + mfr,entry) and !(entry =='.' || entry == '..') }
+end
+globalImageList = Dir.entries(ENV['IMAGES_DIR']).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'],entry) and !(entry =='.' || entry == '..') }
 
 def getSysInfo
   sysInfo = {}
@@ -28,6 +34,10 @@ def getFreeMemory
   return freeMem
 end
 
+
+
+memTestAmt = (getFreeMemory * 0.7).floor
+
 #enable SMART on drive
 smartSupport = system("sudo smartctl --smart=on /dev/sda")
 #run Conveyance SMART test
@@ -35,6 +45,7 @@ smartSupport = system("sudo smartctl --smart=on /dev/sda")
 
 
 memTestAmt = (getFreeMemory * 0.01).floor
+
 totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i/1024.0/1024
 totalRam = totalRam.round
 memoryStatus = Tempfile.new('memStatus')
@@ -100,6 +111,15 @@ end
 
 
 
+else
+  memoryStatus = Tempfile.new('memStatus')
+  memoryStatus.write("PASS")
+  hddStatus= Tempfile.new('hddStatus')
+  hddStatus.write("PASS")
+end
+
+
+
 sysInfo = getSysInfo
 
 get '/' do
@@ -112,4 +132,13 @@ get '/' do
     :sysInfo => sysInfo,
     :humanReadableSize => humanReadableSize}
 
+end
+get '/clone' do
+  erb :clone, :locals => {
+    :sysInfo => sysInfo}
+end
+get '/images' do
+  erb :images, :locals => {
+    :sysInfo => sysInfo,
+    :globalImageList => globalImageList}
 end
