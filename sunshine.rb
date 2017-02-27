@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'tempfile'
-require 'dotenv/load'
+#require 'dotenv/load'
 
 class TrueClass
   def passfail
@@ -14,10 +14,10 @@ class FalseClass
   end
 end
 
-def findImagesFor(mfr)
-  imageList = Dir.entries(ENV['IMAGES_DIR'] + "/" + mfr).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'] + "/" + mfr,entry) and !(entry =='.' || entry == '..') }
-end
-globalImageList = Dir.entries(ENV['IMAGES_DIR']).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'],entry) and !(entry =='.' || entry == '..') }
+#def findImagesFor(mfr)
+#  imageList = Dir.entries(ENV['IMAGES_DIR'] + "/" + mfr).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'] + "/" + mfr,entry) and !(entry =='.' || entry == '..') }
+#end
+#globalImageList = Dir.entries(ENV['IMAGES_DIR']).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'],entry) and !(entry =='.' || entry == '..') }
 
 def getSysInfo
   sysInfo = {}
@@ -108,16 +108,6 @@ else
   hddStatus.rewind
   hddStatus.write("ERROR: SMART Not Supported by Drive")
 end
-
-
-
-else
-  memoryStatus = Tempfile.new('memStatus')
-  memoryStatus.write("PASS")
-  hddStatus= Tempfile.new('hddStatus')
-  hddStatus.write("PASS")
-end
-
 
 
 sysInfo = getSysInfo
