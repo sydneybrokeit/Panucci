@@ -80,7 +80,7 @@ if smartSupport == true
     end
 
     selfHealthTest = `sudo smartctl -H /dev/sda | grep overall | sed 's/.*: //'`.chomp
-    if smartHealthPass != "PASSED"
+    if selfHealthTest != "PASSED"
       puts "FAILED AT HEALTH CHECK"
       hddTestStatus= false.passfail
       hddStatus.rewind
