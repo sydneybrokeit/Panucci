@@ -59,7 +59,7 @@ memTestPID = fork do
 end
 
 driveSize = `lsblk -b | grep "sda " | grep -oE '[0-9]{3,}'`.chomp.to_i
-humanReadableSize = driveSize/1024.0/1024
+humanReadableSize = driveSize/1000.0/1000/1000
 humanReadableSize = humanReadableSize.ceil
 hddStatus= Tempfile.new('hddStatus')
 hddStatus.write("Testing In Progress")
