@@ -25,6 +25,7 @@ def getSysInfo
   sysInfo[:mfr] = `sudo dmidecode --type 1 | grep Manufacturer | sed 's/\tManufacturer: //'`.chomp
   sysInfo[:model] = `sudo dmidecode --type 1 | grep "Product Name:" | sed 's/\tProduct Name: //'`.chomp
   sysInfo[:version] = `sudo dmidecode --type 1 | grep "Version:" | sed 's/\tVersion: //'`.chomp
+  sysInfo[:proc] = `lscpu | grep "Model name:" | sed 's/Model name: *//'`.chomp
   return sysInfo
 end
 
@@ -44,7 +45,7 @@ smartSupport = system("sudo smartctl --smart=on /dev/sda")
 
 
 
-memTestAmt = (getFreeMemory * 0.01).floor
+memTestAmt = (getFreeMemory * 0.5).floor
 
 totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i/1024.0/1024
 totalRam = totalRam.round
@@ -60,7 +61,7 @@ end
 
 driveSize = `lsblk -b | grep "sda " | grep -oE '[0-9]{3,}'`.chomp.to_i
 humanReadableSize = driveSize/1000.0/1000/1000
-humanReadableSize = humanReadableSize.ceil
+humanReadableSize = humanReadableSize.floor
 hddStatus= Tempfile.new('hddStatus')
 hddStatus.write("Testing In Progress")
 if smartSupport == true
