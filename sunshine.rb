@@ -91,7 +91,7 @@ if smartSupport == true
 
     sectors = driveSize/512
     numberOfPasses = 30
-    randomSeekPattern = Random.rand(((sectors/(n-1))..(sectors/4)))-1
+    randomSeekPattern = Random.rand(((sectors/(numberOfPasses-1))..(sectors/4)))-1
     for i in 1..numberOfPasses do
       testSection = (randomSeekPattern * i ) % (sectors-1)
       puts testSection
