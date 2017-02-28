@@ -28,7 +28,7 @@
         <i class="fa fa-hdd-o fa-5x fa-left"></i>
         <div class="specs">
             <h1>Hard Drive</h1>
-            <h2 class="size">Size: 500GB</h2>
+            <h2 class="size">Size: <%=humanReadableSize%>GB</h2>
         </div>
         <% if hddStatus.include? "FAIL" %>
         <i class="fa fa-times fa-3x red fa-right"></i>

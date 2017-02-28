@@ -93,7 +93,7 @@ if smartSupport == true
     numberOfPasses = 30
     randomSeekPattern = Random.rand(((sectors/(numberOfPasses-1))..(sectors/4)))-1
     for i in 1..numberOfPasses do
-      testSection = (randomSeekPattern * i ) % (sectors-1)
+      testSection = (randomSeekPattern * i ) % (sectors-128)
       puts testSection
       if !(system("sudo dd if=/dev/sda of=/dev/null bs=512 skip=#{testSection} count=128"))
         hddTestStatus = false.passfail
