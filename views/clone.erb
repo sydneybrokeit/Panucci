@@ -4,8 +4,8 @@
         if (imageRight) {
             var imaging = document.getElementById("imaging");
             var confirm = document.getElementById("confirm");
-            confirm.style.display = 'none';
-            imaging.style.display = 'flex';
+            confirm.style.opacity = '0';
+            imaging.style.opacity = '1';
         } else {
             window.location = "./images"
         }
@@ -15,7 +15,9 @@
     <% if params[:image] %>
     <h2 class="image">Chosen image:
         <%= params[:image] %></h2>
-    <%end %>
+        <% else %>
+        <h2 class="image">Windows 10?</h2>
+    <% end %>
     <div class="inner-imaging" id="imaging">
 
         <div class="left">

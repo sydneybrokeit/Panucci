@@ -14,10 +14,10 @@ class FalseClass
     end
 end
 
-# def findImagesFor(mfr)
-#  imageList = Dir.entries(ENV['IMAGES_DIR'] + "/" + mfr).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'] + "/" + mfr,entry) and !(entry =='.' || entry == '..') }
-# end
-# globalImageList = Dir.entries(ENV['IMAGES_DIR']).select {|entry| File.directory? File.join(ENV['IMAGES_DIR'],entry) and !(entry =='.' || entry == '..') }
+def findImagesFor(mfr)
+    imageList = Dir.entries(ENV['IMAGES_DIR'] + '/' + mfr).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'] + '/' + mfr, entry)) && !(entry == '.' || entry == '..') }
+end
+globalImageList = Dir.entries(ENV['IMAGES_DIR']).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'], entry)) && !(entry == '.' || entry == '..') }
 
 def getSysInfo
     sysInfo = {}
@@ -41,7 +41,7 @@ memTestAmt = (getFreeMemory * 0.7).floor
 smartSupport = system('sudo smartctl --smart=on /dev/sda')
 # run Conveyance SMART test
 
-if ENV['DEBUG'] == false
+if !ENV['DEBUG']
     memTestAmt = (getFreeMemory * 0.7).floor
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1024.0 / 1024
     totalRam = totalRam.round
