@@ -1,5 +1,17 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+.dark-primary-color    { background: #455A64; }
+.default-primary-color { background: #607D8B; }
+.light-primary-color   { background: #CFD8DC; }
+.text-primary-color    { color: #FFFFFF; }
+.accent-color          { background: #FF5722; }
+.primary-text-color    { color: #212121; }
+.secondary-text-color  { color: #757575; }
+.divider-color         { border-color: #BDBDBD; }
+
+
 body {
-    font-family: sans-serif;
+    font-family: 'Roboto', sans-serif!important;
     background-color: #fafafa;
     color: white;
     width: 100%;
@@ -13,7 +25,7 @@ body {
     width: 100%;
     margin: 0 auto;
     padding: 25px;
-    background-color: #66ccff;
+    background: #607D8B;
 }
 .intro-header h1 {
     font-size: 55px;
@@ -25,6 +37,7 @@ body {
     display: flex;
     margin: 0 auto;
     padding: 12px;
+    flex-wrap: wrap;
     align-items: flex-start;
     flex-direction: row;
 }
@@ -40,7 +53,7 @@ body {
     padding: 24px;
     background-color: white;
     text-align: center;
-    color: black;
+    color: #212121;
     margin-top: 25px;
 }
 .card h2 {
@@ -109,7 +122,7 @@ pre {
     background-color: white;
     margin-top: 25px;
     text-align: center;
-    color: black;
+    color: #212121;
 }
 #small {
     font-size: 22px;
@@ -200,14 +213,56 @@ button {
     background-color: white;
     margin-top: 25px;
     text-align: center;
-    color: black;
+    color: #212121;
 }
 
 /* Images Page */
 
+.manufacturers {
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+    background: #607D8B;
+}
+.manufacturer {
+    box-shadow: none;
+    background-color: inherit;
+    flex-grow: 1;
+    display: flex;
+    align-self: flex-start;
+    margin: 0 auto;
+    padding: 24px;
+    text-align: center!important;
+    margin-top: 25px;
+}
+.tab-title {
+    text-align: center;
+    width: 100%;
+    font-weight: lighter;
+}
+.tab-selected {
+    border-bottom: 10px solid #FF5722;
+}
 .image-model {
     text-align: left;
+    font-size: 45px!important;
+    font-weight: 100!important;
 }
 .card .fa {
     margin-right: 12px;
+}
+.image{
+  width: 200px;
+  margin: 12px;
+}
+.image .fa{
+  color: #FF5722;
+}
+.error{
+  color: #757575;
+  text-align: center;
+  font-weight: 100;
+  width: 100%;
 }

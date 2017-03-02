@@ -1,6 +1,9 @@
 require 'sinatra'
 require 'tempfile'
 require 'dotenv/load'
+require 'yaml'
+require 'find'
+require 'pathname'
 
 class TrueClass
     def passfail
@@ -17,10 +20,24 @@ end
 SIZES = [80, 128, 160, 250, 256, 500, 1000].freeze
 
 def findImagesFor(mfr)
-    imageList = Dir.entries(ENV['IMAGES_DIR'] + '/' + mfr).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'] + '/' + mfr, entry)) && !(entry == '.' || entry == '..') }
+    imageList = []
+    # .select { |f| !Dir[f + '/sda-pt.sf'].empty? }
+    list = Dir[ENV['IMAGES_DIR'] + '/' + mfr + '/*'].select { |f| Dir[f + '/sda-pt.sf'].empty? && File.directory?(f) }
+    list.each do |image|
+        imageList.push(image.sub!(ENV['IMAGES_DIR'] + '/' + mfr, ''))
+    end
+    imageList
 end
+
+def findImagesInFolder(folder)
+  #.select { |entry| File.directory?(entry) && !Dir[entry + '/sda-pt.sf'].empty? }
+    Dir[ENV['IMAGES_DIR'] + '/' + folder + '/*'].select { |entry| File.directory?(entry) }
+  end
+
 if ENV['IMAGES_DIR']
-    globalImageList = Dir.entries(ENV['IMAGES_DIR']).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'], entry)) && !(entry == '.' || entry == '..') }
+    manufacturers = Dir.entries(ENV['IMAGES_DIR']).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'], entry)) && !(entry == '.' || entry == '..') }
+    manufacturers.sort_by!(&:downcase)
+    globalImageList = Dir[ENV['IMAGES_DIR'] + '/**/*'].select { |entry| File.directory?(entry) && !Dir[entry + '/sda-pt.sf'].empty? }
 end
 def getSysInfo
     sysInfo = {}
@@ -133,6 +150,7 @@ end
 get '/images' do
     erb :images, locals: {
         sysInfo: sysInfo,
-        globalImageList: globalImageList
+        globalImageList: globalImageList,
+        manufacturers: manufacturers
     }
 end
