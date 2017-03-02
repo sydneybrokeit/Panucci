@@ -90,17 +90,11 @@ if smartSupport == true
       exit
     end
 
-    sectors = driveSize/512
-    numberOfPasses = 30
-    randomSeekPattern = Random.rand(((sectors/(numberOfPasses-1))..(sectors/4)))-1
-    for i in 1..numberOfPasses do
-      testSection = (randomSeekPattern * i ) % (sectors-128)
-      puts testSection
-      if !(system("sudo dd if=/dev/sda of=/dev/null bs=512 skip=#{testSection} count=128"))
-        hddTestStatus = false.passfail
-        puts "FAILED AT DISK SEEK TEST"
-        break
-      end
+    seekTestResults = system("sudo seeker /dev/sda")
+    if seekTestResults == false
+      hddStatus.rewind
+      hddStatus.write(false.passfail)
+      hddStatus.truncate(false.passfail.length)
     end
 
     hddStatus.rewind
@@ -128,6 +122,8 @@ get '/' do
 
 end
 get '/clone' do
+  system("i3-msg layout splitv")
+  system("xterm -e sudo ocs-sr -g auto -e1 auto -e2 -r -j2 -scr -p reboot restoredisk All_Win10Pro_1000 sda")
   erb :clone, :locals => {
     :sysInfo => sysInfo}
 end
