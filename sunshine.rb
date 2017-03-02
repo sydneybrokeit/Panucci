@@ -42,8 +42,7 @@ smartSupport = system('sudo smartctl --smart=on /dev/sda')
 # run Conveyance SMART test
 
 if ENV['DEBUG'] == false
-    memTestAmt = (getFreeMemory * 0.5).floor
-
+    memTestAmt = (getFreeMemory * 0.7).floor
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1024.0 / 1024
     totalRam = totalRam.round
     memoryStatus = Tempfile.new('memStatus')
@@ -87,16 +86,11 @@ if ENV['DEBUG'] == false
                 exit
             end
 
-            sectors = driveSize / 512
-            numberOfPasses = 30
-            randomSeekPattern = Random.rand(((sectors / (numberOfPasses - 1))..(sectors / 4))) - 1
-            for i in 1..numberOfPasses do
-                testSection = (randomSeekPattern * i) % (sectors - 128)
-                puts testSection
-                next if system("sudo dd if=/dev/sda of=/dev/null bs=512 skip=#{testSection} count=128")
-                hddTestStatus = false.passfail
-                puts 'FAILED AT DISK SEEK TEST'
-                break
+            seekTestResults = system('sudo seeker /dev/sda')
+            if seekTestResults == false
+                hddStatus.rewind
+                hddStatus.write(false.passfail)
+                hddStatus.truncate(false.passfail.length)
             end
 
             hddStatus.rewind
@@ -108,11 +102,11 @@ if ENV['DEBUG'] == false
         hddStatus.rewind
         hddStatus.write('ERROR: SMART Not Supported by Drive')
     end
-  else
+else
     memoryStatus = Tempfile.new('memStatus')
-    memoryStatus.write("PASS")
-    hddStatus= Tempfile.new('hddStatus')
-    hddStatus.write("PASS")
+    memoryStatus.write('PASS')
+    hddStatus = Tempfile.new('hddStatus')
+    hddStatus.write('PASS')
   end
 
 sysInfo = getSysInfo
