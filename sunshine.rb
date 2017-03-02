@@ -14,6 +14,8 @@ class FalseClass
     end
 end
 
+SIZES = [80, 128, 160, 250, 256, 500, 1000]
+
 def findImagesFor(mfr)
     imageList = Dir.entries(ENV['IMAGES_DIR'] + '/' + mfr).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'] + '/' + mfr, entry)) && !(entry == '.' || entry == '..') }
 end
@@ -57,7 +59,7 @@ if !ENV['DEBUG']
 
     driveSize = `lsblk -b | grep "sda " | grep -oE '[0-9]{3,}'`.chomp.to_i
     humanReadableSize = driveSize / 1000.0 / 1000 / 1000
-    humanReadableSize = humanReadableSize.floor
+    humanReadableSize = SIZES.map{|x| [x, (x-humanReadableSize).abs]}.to_h.min_by{|size, distance| distance}[0]
     hddStatus = Tempfile.new('hddStatus')
     hddStatus.write('Testing In Progress')
     if smartSupport == true
