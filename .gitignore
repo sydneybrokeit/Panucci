@@ -1,2 +1,4 @@
 .env
 public/images
+.DS_Store
+._.DS_Store
