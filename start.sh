@@ -1,2 +1,2 @@
 #!/bin/bash
-rerun 'ruby sunshine.rb -o 0.0.0.0'
+rerun 'ruby panucci.rb -o 0.0.0.0'
