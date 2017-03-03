@@ -29,19 +29,22 @@ def findImagesFor(mfr)
     imageList
 end
 
-def generateFileTree
-    if ENV['IMAGES_DIR']
-        Dir.glob(ENV['IMAGES_DIR'] + '/**/*') # get all files below current dir
-           .select do |f|
-            File.directory?(f) # only directories we need
-        end.map do |path|
-            path.split '/' # split to parts
-        end.each_with_object({}) do |path, acc| # start with empty hash
-            path.inject(acc) do |acc2, dir| # for each path part, create a child of current node
-                acc2[dir] ||= {} # and pass it as new current node
-            end
-        end
+def directory_hash(path, name = nil, exclude = [])
+    exclude.concat(['..', '.', '.git', '__MACOSX', '.DS_Store', "._.DS_Store", "All"])
+    data = {'image' => 'false', 'text' => (name || path) }
+    data[:children] = children = []
+    Dir.foreach(path) do |entry|
+        next if exclude.include?(entry)
+        full_path = File.join(path, entry)
+        children << if File.directory?(full_path)
+                    if Dir[full_path + '/sda-pt.sf'].empty?
+                        directory_hash(full_path, entry)
+                      else
+                          { 'image' => 'true', 'text' => entry }
+                      end
+                    end
     end
+    data
 end
 
 def findImagesInFolder(folder)
