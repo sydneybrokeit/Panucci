@@ -1,48 +1,21 @@
 <% @subtitle='/<span id="small">Clone</span>'%>
-<script type="text/javascript">
-    function showHide(imageRight = false) {
-        if (imageRight) {
-            var imaging = document.getElementById("imaging");
-            var confirm = document.getElementById("confirm");
-            confirm.style.opacity = '0';
-            imaging.style.opacity = '1';
-        } else {
-            window.location = "./images"
-        }
-    }
-</script>
 <div class="cloning">
     <% if params[:image] %>
     <h2 class="image">Chosen image:
         <%= params[:image] %></h2>
         <% else %>
         <h2 class="image">Windows 10?</h2>
+          <% params[:image] = "Win10" %>
     <% end %>
-    <div class="inner-imaging" id="imaging">
-
-        <div class="left">
-            <i class="fa fa-server fa-5x"></i>
-        </div>
-        <div class="center">
-            <div id="progress">
-                <div id="bar">
-                    <div id="progress-label">0%</div>
-                </div>
-            </div>
-        </div>
-        <div class="right">
-            <i class="fa fa-desktop fa-5x"></i>
-        </div>
-    </div>
     <div class="inner-confirm" id="confirm">
-        <form onsubmit="alert(imageRight); return false;">
-            <button onclick="var imageRight=true; showHide(imageRight); return false;">
-                <i class="fa fa-check fa-2x green button"></i>
-            </button>
-            <button onclick="var imageRight=false; showHide(imageRight); return false;">
-                <i class="fa fa-times fa-2x red button"></i>
-            </button>
-        </form>
+
+
+                <a href="/<%= params[:image] %>" class="button ">Yes</a>
+
+
+                <a href="/images" class="button destructive">No</a>
+
+
     </div>
 
 </div>

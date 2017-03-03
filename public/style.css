@@ -1,15 +1,29 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto');
-
-.dark-primary-color    { background: #455A64; }
-.default-primary-color { background: #607D8B; }
-.light-primary-color   { background: #CFD8DC; }
-.text-primary-color    { color: #FFFFFF; }
-.accent-color          { background: #FF5722; }
-.primary-text-color    { color: #212121; }
-.secondary-text-color  { color: #757575; }
-.divider-color         { border-color: #BDBDBD; }
-
-
+@import url('materialize/css/materialize.css');
+.dark-primary-color {
+    background: #455A64;
+}
+.default-primary-color {
+    background: #607D8B;
+}
+.light-primary-color {
+    background: #CFD8DC;
+}
+.text-primary-color {
+    color: #FFFFFF;
+}
+.accent-color {
+    background: #FF5722;
+}
+.primary-text-color {
+    color: #212121;
+}
+.secondary-text-color {
+    color: #757575;
+}
+.divider-color {
+    border-color: #BDBDBD;
+}
 body {
     font-family: 'Roboto', sans-serif!important;
     background-color: #fafafa;
@@ -84,6 +98,9 @@ pre {
 }
 .red {
     color: #E53935;
+}
+.destructive{
+  background-color: #E53935!important;
 }
 .main-specs h1, .main-specs p {
     margin-left: 25px;
@@ -164,32 +181,26 @@ pre {
     color: white;
 }
 .inner-confirm {
-    opacity: 1;
-    position: absolute;
-    margin: 0 auto;
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: -60px;
-    left: 0;
-    right: 0;
-    transition: opacity 0.5s linear;
-    -webkit-transition: opacity 0.5s linear;
-    -moz-transition: opacity 0.5s linear;
-    -o-transition: opacity 0.5s linear;
+  
 }
 .inner-select {
     display: none;
 }
 .button {
-    cursor: pointer;
-    padding: 18px;
-    width: 25px;
-    background-color: black;
+    display: inline-block;
+    position: relative;
+    width: 120px;
+    height: 32px;
+    border-radius: 2px;
+    font-size: 15px;
+  line-height: 2.0em;
+    text-transform: uppercase;
+    background-color: #4285f4;
+    color: #fff;
+    text-decoration: none;
+
 }
-button {
-    background-color: black;
-    border: none;
-}
+
 .cloning h1, p {
     text-align: center;
 }
@@ -253,16 +264,17 @@ button {
 .card .fa {
     margin-right: 12px;
 }
-.image{
-  width: 200px;
-  margin: 12px;
+.image {
+    width: 400px;
+    margin: 12px;
 }
-.image .fa{
-  color: #FF5722;
+.image .fa {
+    color: #FF5722;
+    line-height: 1.8em;
 }
-.error{
-  color: #757575;
-  text-align: center;
-  font-weight: 100;
-  width: 100%;
+.error {
+    color: #757575;
+    text-align: center;
+    font-weight: 100;
+    width: 100%;
 }
