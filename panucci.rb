@@ -19,29 +19,30 @@ end
 
 SIZES = [80, 128, 160, 250, 256, 500, 1000].freeze
 
-def findImagesFor(mfr)
-    imageList = []
-    # .select { |f| !Dir[f + '/sda-pt.sf'].empty? }
-    list = Dir[ENV['IMAGES_DIR'] + '/' + mfr + '/*'].select { |f| Dir[f + '/sda-pt.sf'].empty? && File.directory?(f) }
-    list.each do |image|
-        imageList.push(image.sub!(ENV['IMAGES_DIR'] + '/' + mfr, ''))
+def findImagesFor(manufacturer, folder, hash)
+    dirHash = hash.clone
+    path = "#{manufacturer}/#{folder}"
+    locationArray = path.split('/')
+    puts locationArray
+    locationArray.each do |dir|
+        dirHash = dirHash.select { |x| x['text'] == dir }[0][:children]
     end
-    imageList
+    dirHash
 end
 
 def directory_hash(path, name = nil, exclude = [])
-    exclude.concat(['..', '.', '.git', '__MACOSX', '.DS_Store', "._.DS_Store", "All"])
-    data = {'image' => 'false', 'text' => (name || path) }
+    exclude.concat(['..', '.', '.git', '__MACOSX', '.DS_Store', '._.DS_Store', 'All'])
+    data = { 'image' => 'false', 'text' => (name || path) }
     data[:children] = children = []
     Dir.foreach(path) do |entry|
         next if exclude.include?(entry)
         full_path = File.join(path, entry)
         children << if File.directory?(full_path)
-                    if Dir[full_path + '/sda-pt.sf'].empty?
-                        directory_hash(full_path, entry)
-                      else
-                          { 'image' => 'true', 'text' => entry }
-                      end
+                        if Dir[full_path + '/sda-pt.sf'].empty?
+                            directory_hash(full_path, entry)
+                        else
+                            { 'image' => 'true', 'text' => entry }
+                          end
                     end
     end
     data
@@ -53,7 +54,9 @@ def findImagesInFolder(folder)
 
 if ENV['IMAGES_DIR']
     manufacturers = Dir.entries(ENV['IMAGES_DIR']).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'], entry)) && !(entry == '.' || entry == '..') }
+    manufacturers.concat ['All']
     manufacturers.sort_by!(&:downcase)
+
     globalImageList = Dir[ENV['IMAGES_DIR'] + '/**/*'].select { |entry| File.directory?(entry) && !Dir[entry + '/sda-pt.sf'].empty? }
 end
 def getSysInfo
@@ -140,6 +143,7 @@ if !ENV['DEBUG']
         hddStatus.write('ERROR: SMART Not Supported by Drive')
     end
 else
+    driveSize = ENV["SIZE"]
     memoryStatus = Tempfile.new('memStatus')
     memoryStatus.write('PASS')
     hddStatus = Tempfile.new('hddStatus')
@@ -168,6 +172,19 @@ get '/images' do
     erb :images, locals: {
         sysInfo: sysInfo,
         globalImageList: globalImageList,
-        manufacturers: manufacturers
+        dir_listing: directory_hash(ENV['IMAGES_DIR'], nil, [])[:children],
+        size: driveSize
     }
+end
+
+class Hash
+    def nested_each_pair
+        each_pair do |k, v|
+            if v.is_a?(Hash)
+                v.nested_each_pair { |k, v| yield k, v }
+            else
+                yield(k, v)
+            end
+        end
+    end
 end
