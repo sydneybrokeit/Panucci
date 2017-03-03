@@ -1,17 +1,15 @@
-<% if globalImageList && params["manufacturer"] == nil || params["manufacturer"] == "All" %>
-<%@subtitle='/<span id="small">images/ all </span>'%>
-<% imageList = globalImageList %>
-<% elsif params["manufacturer"] != nil  && params["folder"] == nil %>
-<%@subtitle='/<span id="small">images/ ' + params["manufacturer"] +'</span>'%>
-<% imageList = findImagesFor(params["manufacturer"]) %>
-<% elsif params["manufacturer"] != nil  && params["folder"] != nil %>
-<% imageList = findImagesInFolder(params["folder"]) %>
-<%@subtitle='/<span id="small">images/ ' + params["folder"] +'</span>'%>
+<% mfrArray = [] %>
+<% dir_listing.each do |object|; object = object["text"]; mfrArray.push(object); end; mfrArray.sort!%>
+
+<% if params["manufacturer"] == nil  %>
+
+<% first =  mfrArray.first ; manufacturer = first + "/#{params['folder']}"; @subtitle="/<span id=\"small\">images/  #{manufacturer} </span>"; params["manufacturer"] = first %>
 <% else %>
-<%@subtitle='/<span id="small">images</span>'%>
+<% manufacturer = params["manufacturer"] + "/#{params['folder']}"; @subtitle="/<span id=\"small\">images/  #{manufacturer} </span>"%>
 <% end %>
+
 <div class="manufacturers">
-    <% manufacturers.each do |mfr| %>
+  <% mfrArray.each do |mfr| %>
     <% if mfr == "All" && params["manufacturer"] == nil %>
     <div class="manufacturer tab-selected" id="<%= mfr %>" onclick="window.location = '?manufacturer=<%= mfr %>'" style="cursor: pointer;">
         <% elsif params["manufacturer"] != nil && mfr ==  params["manufacturer"] %>
@@ -23,23 +21,25 @@
             </div>
             <% end %>
         </div>
-        <div class="subcards">
-            <% if imageList.count != 0 %>
-            <% imageList.each do |image| %>
-            <% if !Dir[image + '/sda-pt.sf'].empty? %>
-            <div class="card image" id="<%= image %>" onclick="window.location = '../clone?image=<%= image %>'" style="cursor: pointer;">
-                <i class="fa fa-desktop fa-4x"></i>
-            <% else %>
-                <% path = image.gsub(ENV["IMAGES_DIR"],"") ; path = path.gsub(params["manufacturer"] + '/',"") %>
-                <div class="card image" id="<%= image %>" onclick="window.location = '?folder=<%=  params["manufacturer"]  + path %>&manufacturer=<%=  params["manufacturer"]%>'" style="cursor: pointer;">
-                    <i class="fa fa-folder-open fa-4x"></i>
-                    <% end %>
-                    <h2 class="image-model"><%= File.basename(image).gsub("_", " ") %></h2>
-                </div>
-                <% end %>
-            <% else %>
-                <h2 class="error">No images found</h2>
-                <% end %>
-            </div>
+    </div>
+</div>
 
-        </div>
+<div class="subcards">
+
+<% if params["folder"];  folder="#{params["folder"]}/"; else; folder = ""; end; imagesList = findImagesFor(params["manufacturer"], folder , dir_listing) %>
+    <% if Dir[ENV['IMAGES_DIR']  + "/" + params["manufacturer"] + "/#{params["folder"]}" + '/sda-pt.sf'].empty? && imagesList  %>
+    <% imagesList.each do |key, value| %>
+    <% if !File.exist?(ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size + '/sda-pt.sf') %>
+
+    <% puts "not image" %>
+    <div class="card image" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{key["text"]}"%>'" style="cursor: pointer;">
+    <% if params["folder"]; params["folder"] = params["folder"] + key["text"]; else; params["folder"] =  key["text"]; end %>
+        <i class="fa fa-folder-open fa-4x"></i>
+        <h2 class="image-model"><%= key["text"] %></h2>
+    </div>
+    <% else %>
+<% redirect "/clone?image=#{ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size}"%>
+      <%end %>
+        <%end %>
+    <%end %>
+</div>
