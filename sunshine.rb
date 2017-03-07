@@ -1,12 +1,6 @@
-require 'sinatra' #creates web interface
-require 'tempfile' #allows use of tempfiles
-require 'dotenv/load' #used to allow configuration used environment variables or .env file in project folder
-require 'yaml'
-require 'find'
-require 'pathname'
-####################################################################
-# Extend the True and False singletons to include a passfail method
-####################################################################
+require 'sinatra'
+require 'tempfile'
+require 'dotenv/load'
 
 class TrueClass
     def passfail
@@ -21,48 +15,14 @@ class FalseClass
 end
 
 SIZES = [80, 128, 160, 250, 256, 500, 1000].freeze
+imagingStarted = false
 
-def findImagesFor(manufacturer, folder, hash)
-    dirHash = hash.clone
-    path = "#{manufacturer}/#{folder}"
-    locationArray = path.split('/')
-    puts locationArray
-    locationArray.each do |dir|
-        dirHash = dirHash.select { |x| x['text'] == dir }[0][:children]
-    end
-    dirHash
+def findImagesFor(mfr)
+    imageList = Dir.entries(ENV['IMAGES_DIR'] + '/' + mfr).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'] + '/' + mfr, entry)) && !(entry == '.' || entry == '..') }
 end
-#Create directory hash through iteration
-def directory_hash(path, name = nil, exclude = [])
-    exclude.concat(['..', '.', '.git', '__MACOSX', '.DS_Store', '._.DS_Store', 'All'])
-    data = { 'image' => 'false', 'text' => (name || path) }
-    data[:children] = children = []
-    Dir.foreach(path) do |entry|
-        next if exclude.include?(entry)
-        full_path = File.join(path, entry)
-        children << if File.directory?(full_path)
-                        if Dir[full_path + '/sda-pt.sf'].empty?
-                            directory_hash(full_path, entry)
-                        else
-                            { 'image' => 'true', 'text' => entry }
-                        end
-                    end
-    end
-    data
-end
-
-def findImagesInFolder(folder)
-    Dir[ENV['IMAGES_DIR'] + '/' + folder + '/*'].select { |entry| File.directory?(entry) }
-end
-
 if ENV['IMAGES_DIR']
-    manufacturers = Dir.entries(ENV['IMAGES_DIR']).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'], entry)) && !(entry == '.' || entry == '..') }
-    manufacturers.concat ['All']
-    manufacturers.sort_by!(&:downcase)
-
-    globalImageList = Dir[ENV['IMAGES_DIR'] + '/**/*'].select { |entry| File.directory?(entry) && !Dir[entry + '/sda-pt.sf'].empty? }
+    globalImageList = Dir.entries(ENV['IMAGES_DIR']).select { |entry| File.directory?(File.join(ENV['IMAGES_DIR'], entry)) && !(entry == '.' || entry == '..') }
 end
-
 def getSysInfo
     sysInfo = {}
     sysInfo[:serial] = `sudo dmidecode --type 1 | grep Serial | sed 's/\tSerial Number: //'`.chomp
@@ -147,12 +107,11 @@ if !ENV['DEBUG']
         hddStatus.write('ERROR: SMART Not Supported by Drive')
     end
 else
-    driveSize = ENV["SIZE"]
     memoryStatus = Tempfile.new('memStatus')
     memoryStatus.write('PASS')
     hddStatus = Tempfile.new('hddStatus')
     hddStatus.write('PASS')
-end
+  end
 
 sysInfo = getSysInfo
 
@@ -173,33 +132,16 @@ get '/clone' do
     }
 end
 get '/images' do
-    puts ENV['IMAGES_DIR']
     erb :images, locals: {
         sysInfo: sysInfo,
-        globalImageList: globalImageList,
-        dir_listing: directory_hash(ENV['IMAGES_DIR'], nil, [])[:children],
-        size: humanReadableSize
+        globalImageList: globalImageList
     }
 end
 
-imageStarted = false
-get '/startClone' do
-  image = params[:image]
-  if imageStarted == false
-    system("i3-msg layout splitv")
-    imageStarted = true
-    system("xterm -e \"sudo ocs-sr -g auto -e1 auto -e2 -r -j2 -scr -icds -p reboot restoredisk #{image} sda\"")
-  end
-end
-
-class Hash
-    def nested_each_pair
-        each_pair do |k, v|
-            if v.is_a?(Hash)
-                v.nested_each_pair { |k, v| yield k, v }
-            else
-                yield(k, v)
-            end
-        end
-    end
-end
+#get '/win10' do
+#  if imagingStarted == false
+#    imagingStarted = true
+#    system("i3-msg layout splitv")
+#    system("xterm -e \"sudo ocs-sr -g auto -e1 auto -e2 -r -j2 -scr -icds -p reboot restoredisk all/win10/#{humanReadableSize.to_s} sda\"")
+#  end
+#end

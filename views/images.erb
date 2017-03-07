@@ -29,8 +29,8 @@
 <% if params["folder"];  folder="#{params["folder"]}/"; else; folder = ""; end; imagesList = findImagesFor(params["manufacturer"], folder , dir_listing) %>
     <% if Dir[ENV['IMAGES_DIR']  + "/" + params["manufacturer"] + "/#{params["folder"]}" + '/sda-pt.sf'].empty? && imagesList  %>
     <% imagesList.each do |key, value| %>
-    <% if !File.exist?(ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size + '/sda-pt.sf') %>
-
+    <% if !File.exist?(ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf') %>
+    <% puts ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf' %>
     <% puts "not image" %>
     <div class="card image" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{key["text"]}"%>'" style="cursor: pointer;">
     <% if params["folder"]; params["folder"] = params["folder"] + key["text"]; else; params["folder"] =  key["text"]; end %>
@@ -38,7 +38,7 @@
         <h2 class="image-model"><%= key["text"] %></h2>
     </div>
     <% else %>
-<% redirect "/clone?image=#{ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size}"%>
+<% redirect "/clone?image=#{params["manufacturer"]}/#{params["folder"]}/#{size.to_s}" %>
       <%end %>
         <%end %>
     <%end %>
