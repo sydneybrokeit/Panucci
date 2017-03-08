@@ -20,7 +20,7 @@ class FalseClass
     end
 end
 
-SIZES = [80, 128, 160, 250, 256, 500, 1000].freeze
+SIZES = [80, 120, 160, 250, 256, 500, 1000].freeze
 
 def findImagesFor(manufacturer, folder, hash)
     dirHash = hash.clone

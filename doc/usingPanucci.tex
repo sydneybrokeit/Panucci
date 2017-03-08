@@ -2,6 +2,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{outlines}
+\usepackage{listings}
+\usepackage{spverbatim}
+\usepackage{hyperref}
+
 \setlength{\parindent}{4em}
 \setlength{\parskip}{1em}
 \begin{document}
@@ -63,16 +67,71 @@ Additionally, the calculated number is the theoretical threshold to have all uni
 \subsubsection{Recommendations}
 There are some standard methods to help improve your storage for Panucci.
 \begin{itemize}
-  \item Consider using RAID (especially RAID 1+0).  Properly configured, RAID can offer significant performance and resiliency advantages.  If hardware RAID is not available, LVM or software RAID are viable alternatives, but you will see a performance hit from their use.
+  \item Consider using RAID (especially RAID 1+0).  Properly configured, RAID can offer significant performance and resiliency advantages.  If hardware RAID is not available, LVM or software RAID are viable alternatives, but you will see a performance hit from their use.  Keep in mind that using RAID levels other than RAID 0 will necessarily reduce usable space, but are much more reliable and fault-tolerant.  \textbf{Using RAID 0 alone is not recommended under any circumstance.}
   \item Consider splitting out the drives by use.  In a multi-array or multi-drive environment, place machine images onto one array or drive (usually as \textit{/home/partimag}) and place the core operating system on another array or drive.
   \item Consider using Solid State Drives (SSDs) or SAS drives.  Both provide a performance gain over traditional SATA drives.  SSDs are more expensive per unit of storage, but are usually the fastest option available.  SAS drives offer more storage, but are slower.
 \end{itemize}
 \subsection{Network}
 Given that Panucci is a network-based imaging platform, it makes sense that it is heavily network-bound.
 \subsubsection{Network Ports}
-Ideally, each client machine will operate at the full speed of the network connection (although this is not always the case due to a number of factors).  This can simplify the network calculations if both the server and client are running the same speed (e.g., both are using gigabit ethernet).  In such instances, you will need as many network ports on the server as you wish to have simultaneous clients.
+Ideally, each client machine will operate at the full speed of the network connection (although this is not always the case due to a number of factors).  This can simplify the network calculations if both the server and client are running the same speed (e.g., both are using gigabit ethernet).  In such instances, you will need as many network ports on the server as you wish to have simultaneous clients, plus an additional port to handle general network traffic.
+\begin{center}
+  \textbf{Gigabit to Gigabit}\linebreak
+  16 simultaneous clients + 1 general network = \textbf{17 total ports}
+\end{center}
+As a general rule, expect gigabit ethernet on the client devices.  Given this, the calculations for higher speed network connections are relatively simple.  Keep in mind that to use a certain connection speed, all intermediate hardware must support it (e.g., plugging 8Gb fiber channels into a switch that only supports 4Gb will drop the speed to 4Gb).
+\begin{center}
+  \textbf{Example:} Servicing 16 Computers with 4Gb Fiber\linebreak
+  16 Clients = \textbf{16Gbps}\linebreak
+  16Gbps/4Gbps = \textbf{4 connections}\linebreak
+  \textbf{Result:} You will need 4x 4gbps connections to simultaneously service 16 machines, plus the connection to the outside network.
+\end{center}
+\subsubsection{Recommendations and notes}
+\begin{itemize}
+  \item When possible, offer every client the full extent of its network capabilities.  For most modern machines, this means allowing each client 1Gbps.
+  \item If providing each client its full network capacity is unfeasible, aim to minimize the reduction, as a reduction in capacity will inversely impact the imaging process (i.e., half speed means twice the time to clone an image).
+  \item If you will be using a switch, rather than direct connections, be sure to set up VLANs or similar networking partitioning methods for each port on the server.
+\end{itemize}
 
 \pagebreak
-\section{Installation Procedure}
-
+\section{Infrastructure Installation Procedure}
+These steps pertain specifically to install the infrastructure supporting Panucci.  These steps will get you a working base to install Panucci on.  If you already have an NFS and PXE server, skip to ``Panucci Installation Procecdure".
+\subsection{Installing Ubuntu Server}
+\begin{enumerate}
+  \item Download the image to create Ubuntu Server install media.  Images can be found at \url{https://www.ubuntu.com/server}
+  \item Create the bootable media.  If you are unsure how, follow \href{https://www.ubuntu.com/download/desktop/create-a-usb-stick-on-windows}{these instructions using Rufus on Windows}.
+  \item Boot from the media on the device you will be using as a server.  The specifics will vary depending on the exact device being used, and are outside the scope of this document.
+  \item Follow the prompts in the Ubuntu Server installer.  It is unnecessary to select any of the package groups other than the base package and, for your optional convenience, OpenSSH (to allow remote access.)  For additional assistance installing Ubuntu Server, see \href{https://www.ubuntu.com/download/server/install-ubuntu-server}{Ubuntu's documentation}.
+\end{enumerate}
+\subsection{Installing DRBL on Ubuntu 16.04}
+DRBL (Diskless Remote Boot for Linux) is a package designed to make PXE/diskless booting much easier.  While DRBL is not required to use Panucci, it does greatly simplify setting up the infrastructure.  Setting up PXE without DRBL is outside the scope of this document.
+\begin{enumerate}
+  \item Log in to the server and open a command line.  If you are logging in remotely using SSH, you should already have a command line open.
+  \item At the command prompt, enter the following commands to add the official Universe and Multiverse repositories:
+      \begin{spverbatim}
+sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ xenial universe multiverse"
+      \end{spverbatim}
+      \begin{spverbatim}
+sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ xenial-updates universe multiverse"
+      \end{spverbatim}
+    \item Add the DRBL repositories to the APT sources.list
+      \begin{spverbatim}
+sudo sh -c 'echo "deb http://drbl.sourceforge.net/drbl-core drbl stable" >> /etc/apt/sources.list'
+      \end{spverbatim}
+    \item Add the DRBL repositories GPG keys by running the following two commands:
+      \begin{spverbatim}
+wget http://drbl.sourceforge.net/GPG-KEY-DRBL
+      \end{spverbatim}
+      \begin{spverbatim}
+sudo apt-key add GPG-KEY-DRBL
+      \end{spverbatim}
+    \item Update the repository listings and update the system
+      \begin{spverbatim}
+sudo apt-get update && sudo apt-get upgrade
+      \end{spverbatim}
+    \item Install DRBL
+      \begin{spverbatim}
+sudo apt-get install drbl
+      \end{spverbatim}
+\end{enumerate}
 \end{document}
