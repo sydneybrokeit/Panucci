@@ -70,7 +70,7 @@ Additionally, the calculated number is the theoretical threshold to have all uni
 \subsubsection{Recommendations}
 There are some standard methods to help improve your storage for Panucci.
 \begin{itemize}
-  \item Consider using RAID (especially RAID 1+0).  Properly configured, RAID can offer significant performance and resiliency advantages.  If hardware RAID is not available, LVM or software RAID are viable alternatives, but you will see a performance hit from their use.  Keep in mind that using RAID levels other than RAID 0 will necessarily reduce usable space, but are much more reliable and fault-tolerant.  \textbf{Using RAID 0 alone is not recommended under any circumstance.}
+  \item Consider using RAID (especially RAID 1+0).  Properly configured, RAID can offer significant performance and resiliency advantages.  If hardware RAID is not available, LVM or software RAID are viable alternatives, but you will see a performance hit from their use.  Keep in mind that using RAID levels other than RAID 0 will necessarily reduce usable space, but are much more reliable and fault-tolerant.  \textbf{Due to the high risk of data loss, using RAID 0 alone is not recommended under any circumstance.}
   \item Consider splitting out the drives by use.  In a multi-array or multi-drive environment, place machine images onto one array or drive (usually as \code{/home/partimag}) and place the core operating system on another array or drive.
   \item Consider using Solid State Drives (SSDs) or SAS drives.  Both provide a performance gain over traditional SATA drives.  SSDs are more expensive per unit of storage, but are usually the fastest option available.  SAS drives offer more storage, but are slower.
 \end{itemize}
@@ -146,7 +146,15 @@ While many network configurations will work, this is our recommended configurati
 ip link show | grep mtu | sed 's/: <..*//g' | sed 's/.*: //'
   \end{spverbatim}
   \item Determine which network device is the ``external" port (the one reserved for outside network access).  Remove it from the list.  The easiest way to determine this is to make sure that the only interface connected is the one you intend to use, then run \code{ifconfig} and look for the interface with an IP address.
-  \item For each
+  \item For each network interface, define it in \code{/etc/network/interfaces} as follows:
+  \begin{spverbatim}
+auto eth2 //interface name
+iface eth2 inet static //set interface to static
+address 192.168.43.13 //set static IP address; increment the third octet (c in a.b.c.d) for each interface.  We've set the fourth octet (d) to 13, but any number should work.  If you set the interface to x.x.x.1, be sure to account for that in the DRBL configuration.
+netmask 255.255.255.0 // You can almost always leave this alone.
+  \end{spverbatim}\linebreak
+In the above example, \code{eth2} is the interface name.  \code{static} means to set a static IP address, rather than have the interface use DHCP to get an IP.
 \end{enumerate}
+\textbf{Note:} There is a network interface generation script included in the Panucci repository.  Feel free to use that if you are uncomfortable editing system configuration files by hand.  Simply run the script as root (\code{sudo ruby interfaces.rb}).
 \end{flushleft}
 \end{document}
