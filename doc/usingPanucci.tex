@@ -156,5 +156,98 @@ netmask 255.255.255.0 // You can almost always leave this alone.
 In the above example, \code{eth2} is the interface name.  \code{static} means to set a static IP address, rather than have the interface use DHCP to get an IP.
 \end{enumerate}
 \textbf{Note:} There is a network interface generation script included in the Panucci repository.  Feel free to use that if you are uncomfortable editing system configuration files by hand.  Simply run the script as root (\code{sudo ruby interfaces.rb}).
+\subsection{Configuring DRBL}
+\begin{enumerate}
+  \item Begin the DRBL setup process by running \code{sudo drblsrv -i}
+  \item \code{Do you want to install the network installation boot images so that you can let the client computer install some GNU/Linux distributions...}\linebreak\linebreak
+  Enter "N" or simply hit Enter.
+  \item \code{Do you want to use the serial console output on the client computer(s)?}\linebreak\linebreak
+  Enter "N" or simply hit Enter.
+  \item \code{Do you want to upgrade the operating system?}\linebreak\linebreak
+  It is recommended to select "No" here.
+  \item After the question about the OS upgrade, DRBL will begin pulling its dependencies.  If asked, select the newest kernel available for best hardware compatibility.
+  \item After \code{drblsrv} has completed, start the configuration process by running \code{sudo drblpush -i}
+  \begin{enumerate}
+    \item \code{Please enter the DNS domain (such as drbl.sf.net)}\linebreak\linebreak
+    Set this to whatever your preferred value is.  The default is also acceptable.
+    \item \code{Please enter NIS/YP domain name}\linebreak\linebreak
+    Leave this as default (\code{penguinzilla})
+    \item \code{Please enter the client hostname prefix}\linebreak\linebreak
+    This defaults to the server hostname (e.g., \code{ubuntu-}).  Set this as desired.
+    \item \code{Which ethernet port in this server is for public Internet access}\linebreak\linebreak
+    Select the interface you configured in your network configuration as the external interface.
+    \item \code{If you want to let the DHCP service in DRBL server offer same IP address every time...}\linebreak\linebreak
+    Select the default "no".\linebreak\linebreak
+
+    \textbf{Note:} The next four (4) steps will repeat for each interface.
+    \item \code{do you want the let the DHCP service in DRBL... This is for the clients connected to DRBL server's ethernet network interface...}\linebreak\linebreak
+    Select the default "no".
+    \item \code{What is the initial number do you want to use in the last set of digits in the IP... for DRBL clients connected to this ethernet port \$interface}\linebreak\linebreak
+    If you are following our configuration exactly, set this value to 1.  Otherwise, set it to whatever value you feel is appropriate.
+    \item \code{How many DRBL clients... connected to DRBL server's ethernet network interface \$interface?}\linebreak\linebreak
+    We've been setting this to 4, even though we will only have one machine for each port.  DRBL doesn't seem to like setting it to 1, likely due to DHCP.  Set this as appropriate.
+    \item \code{we will set the IP address for the clients connected to DRBL server's ethernet network interface \$interface as:...}\linebreak\linebreak
+    This should be correct, so accept it (hit Enter).
+    \item \code{Press Enter to continue...}\linebreak\linebreak
+    Press Enter to continue.
+    \item \code{In the system, there are 3 modes for diskless linux services... Which mode do you prefer?}\linebreak\linebreak
+    Select option \code{[1] DRBL SSI mode}.
+    \item \code{In the system, there are 4 modes available for Clonezilla... Which mode do you prefer?}\linebreak\linebreak
+    Select option \code{[1] Clonezilla box mode}.  This will set the clients up with NFS-based image storage quickly and easily.
+    \item {When using clonezilla, which directory in this server you want to store the saved image...}\linebreak\linebreak
+    The default option of \code{/home/partimag} is sane.  Do not change without good reason.
+    \item \code{If there is a local harddrive with swap partition or writable file system... do you want to use that swap partition?}\linebreak\linebreak
+    Change to "no".
+    \item \code{Which mode to you want the clients to use after they boot?}\linebreak\linebreak
+    Select option \code{"1": graphic mode (X window system)}
+    \item \code{Which mode do you want when client boots in graphic mode?}\linebreak\linebreak
+    Select option \code{[0] normal login}.
+    \item \code{Do you want to set the root's password for clients instead of using the same root's password copied from server?}\linebreak\linebreak
+    This is up to you.  We've not enabled it on our configuration.  Default is "no"
+    \item \code{do you want to set the pxelinux password for clients so that when client boots, a password must be entered to startup?}\linebreak\linebreak
+    This is up to you.  We've not enabled it on our configuration.  Default is "no".
+    \item \code{Do you want to set the boot prompt for clients?}\linebreak\linebreak
+    Select default "yes".
+    \item \code{How many 1/10 ssec is the boot prompt timeout for clients?}\linebreak\linebreak
+    Default is 70, but lower values are fine to reduce boot time.
+    \item \code{Do you want to use graphic background for PXE menu when client boots?}\linebreak\linebreak
+    The default is "yes", but either option works fine.
+    \item \code{Do you want to let audio, cdrom, floppy, video, and plugdev (like USB device) open to all users in the DRBL client?}\linebreak\linebreak
+    Select the default "yes".
+    \item \code{Do you want to setup public IP for clients?}\linebreak\linebreak
+    Leave this as "no" unless you know what you're doing.  This is not a supported feature from the developers of Panucci.
+    \item \code{Do you want to let DRBL clients have an option to run terminal mode?}\linebreak\linebreak
+    Leave this as "no" unless you know what you're doing.  This is not a supported feature from the developers of Panucci.
+    \item \code{Do you want to let DRBL server act as a NAT server?}\linebreak\linebreak
+    Leave this as "yes" unless you know client machines will never need to access any external machine during the imaging process.
+    \item \code{Press Enter to continue...}\linebreak\linebreak
+    Press Enter to continue.
+    \item \code{Warning!  If you go on, your firewall rules will be overwritten during the setup!}\linebreak\linebreak
+    Select default of "yes".
+  \end{enumerate}
+  Fortunately, that's the last step, because we've run out of letters in LaTeX.
+\end{enumerate}
+\subsection{Installing Required Software in Ubuntu 16.04 LTS}
+These are the software requirements in general.  If you are using another environment, translate these instructions to your environment.
+\subsubsection{git}
+Panucci is available from GitHub, and to keep up to date with the latest versions of Panucci, it's recommended that you clone it using git.  Git can be installed by running \code{sudo apt-get install git}.
+\subsubsection{Ruby}
+Ruby is used to glue all the parts of Panucci together.  It forms the core logic of the platform.  To install Ruby, run \code{sudo apt-get install ruby}.
+\subsubsection{Sinatra}
+Sinatra is a Ruby gem that creates a small web server designed to work with simple Ruby web applications.  To install it, run \code{sudo gem install sinatra}.
+\subsubsection{dotenv}
+dotenv is a Ruby gem used to define certain parameters outside the script.  To install dotenv, run \code{sudo gem install dotenv}.
+\subsubsection{Chromium}
+Chromium is a standards-compliant, open source web browser.  Other browsers can be used with minor modifications, but we selected Chromium on our build because of its overall usefulness.  To install it, run \code{sudo apt-get install chromium-browser}.
+\subsubsection{i3}
+The i3 Window Manager (i3wm) is a lightweight, configurable window manager for Linux and other Unix-like systems.  Alternatives can be used, but i3 was chosen for its light weight and simple configuration.  to install it, run \code{sudo apt-get install i3}.
+\subsubsection{GDM}
+GDM (Gnome Display Manager) is a common display manager used in Linux.  When using Panucci, it's used in place of a standard xinit to help resolve certain booting issues.  To install GDM, run \code{sudo apt-get install gdm}.  It will pull in many dependencies, so be aware of that.
+\subsubsection{dmidecode}
+dmidecode is a utility used to get system-level information such as unit serial number, manufacturer, and model.  To install it, run \code{sudo apt-get install dmidecode}.
+\subsubsection{smartmontools}
+Smartmontools, specifically \code{smartctl}, is a set of utilities for accessing and using the S.M.A.R.T. reporting and testing functionality on practically all modern hard drives and solid state drives.  To install it, run \code{sudo apt-get install smartmontools}.
+\subsubsection{memtester}
+memtester is a utility used to perform advanced pattern tests on RAM.  To install it, run \code{sudo apt-get install memtester}.
 \end{flushleft}
 \end{document}
