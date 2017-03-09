@@ -31,7 +31,7 @@ ipD = gets.chomp.to_i
 
 
 configFile = File.open("/etc/network/interfaces", "w+")
-interface.each do |interface|
+interfaces.each do |interface|
   if interface == "lo"
       configFile.write("#loopback device\n")
       configFile.write("auto lo\n")
