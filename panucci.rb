@@ -154,6 +154,19 @@ else
     hddStatus.write('PASS')
 end
 
+fork do
+  until (hddStatus.read != "Testing In Progress" && memoryStatus.read != "Testing In Progress") do
+    hddStatus.rewind
+    memoryStatus.rewind
+    sleep(10)
+  end
+  if (hddStatus.read == "PASS" && memoryStatus.read == "PASS")
+    system("printf \" PASSED\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}\" | lpr -P Stage2")
+  else
+    system("printf \" FAILED\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}\" | lpr -P Stage2")
+  end
+end
+
 sysInfo = getSysInfo
 
 get '/' do
@@ -187,7 +200,6 @@ get '/startClone' do
   image = params[:image]
   if imageStarted == false
     #To print labels.
-    system("printf \"PASSED\nModel: #{sysInfo[:mfr]} #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}\" | lpr -P Stage2")
     system("i3-msg layout splitv")
     imageStarted = true
     system("xterm -e \"sudo ocs-sr -g auto -e1 auto -e2 -r -j2 -scr -icds -p reboot restoredisk #{image} sda\"")

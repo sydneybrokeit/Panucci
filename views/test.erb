@@ -2,7 +2,7 @@
 <% memGood = false %>
 <% hddGood = false %>
 <div class="main-specs">
-  <% if ((memoryStatus == "Testing In Progress") || (hddStatus == "Testing In Progress")) %>
+  <% if (memoryStatus == "Testing In Progress" or hddStatus == "Testing In Progress") %>
       <script type="text/javascript">
       setTimeout(function () {
         location.reload();
