@@ -86,7 +86,7 @@ smartSupport = system('sudo smartctl --smart=on /dev/sda')
 # run Conveyance SMART test
 
 if !ENV['DEBUG']
-    memTestAmt = (getFreeMemory * 0.01).floor
+    memTestAmt = (getFreeMemory * 0.5).floor
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1024.0 / 1024
     totalRam = totalRam.round
     memoryStatus = Tempfile.new('memStatus')
