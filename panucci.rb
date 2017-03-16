@@ -7,7 +7,7 @@ require 'pathname'
 ####################################################################
 # Extend the True and False singletons to include a passfail method
 ####################################################################
-
+labelPrinted = false
 class TrueClass
     def passfail
         'PASS'
@@ -79,14 +79,14 @@ def getFreeMemory
     freeMem
 end
 
-memTestAmt = (getFreeMemory * 0.7).floor
+memTestAmt = (getFreeMemory * 0.01).floor
 
 # enable SMART on drive
 smartSupport = system('sudo smartctl --smart=on /dev/sda')
 # run Conveyance SMART test
 
 if !ENV['DEBUG']
-    memTestAmt = (getFreeMemory * 0.7).floor
+    memTestAmt = (getFreeMemory * 0.01).floor
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1024.0 / 1024
     totalRam = totalRam.round
     memoryStatus = Tempfile.new('memStatus')
@@ -154,24 +154,23 @@ else
     hddStatus.write('PASS')
 end
 
-fork do
-  until (hddStatus.read != "Testing In Progress" && memoryStatus.read != "Testing In Progress") do
-    hddStatus.rewind
-    memoryStatus.rewind
-    sleep(10)
-  end
-  if (hddStatus.read == "PASS" && memoryStatus.read == "PASS")
-    system("printf \" PASSED\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}\" | lpr -P Stage2")
-  else
-    system("printf \" FAILED\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}\" | lpr -P Stage2")
-  end
-end
-
 sysInfo = getSysInfo
 
 get '/' do
     memoryStatus.rewind
     hddStatus.rewind
+    if labelPrinted == false
+      if hddStatus.read != "Testing In Progress"
+        if memoryStatus.read != "Testing In Progress"
+          hddStatus.rewind
+          memoryStatus.rewind
+          labelPrinted = system("printf \" HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}\" | lpr -P Stage2")
+          hddStatus.rewind
+          memoryStatus.rewind
+        end
+      else hddStatus.rewind
+      end
+    end
     erb :test, locals: {
         totalRam: totalRam,
         memoryStatus: memoryStatus.read,
