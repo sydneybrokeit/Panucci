@@ -90,7 +90,7 @@ if !ENV['DEBUG']
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1024.0 / 1024
     totalRam = totalRam.round
     memoryStatus = Tempfile.new('memStatus')
-    memoryStatus.write('Testing In Progress')
+    memoryStatus.write("Testing In Progress")
     memTestPID = fork do
         status = system("sudo memtester #{memTestAmt} 1").passfail
         memoryStatus.rewind
@@ -160,8 +160,8 @@ get '/' do
     memoryStatus.rewind
     hddStatus.rewind
     if labelPrinted == false
-      if hddStatus.read != "Testing In Progress"
-        if memoryStatus.read != "Testing In Progress"
+      if memoryStatus.read != "Testing In Progress"
+        if hddStatus.read != "Testing In Progress"
           hddStatus.rewind
           memoryStatus.rewind
           labelPrinted = system("printf \" Date: #{Date.today.to_s}\n HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\" | lpr -P Stage2")
