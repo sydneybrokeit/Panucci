@@ -164,7 +164,7 @@ get '/' do
         if memoryStatus.read != "Testing In Progress"
           hddStatus.rewind
           memoryStatus.rewind
-          labelPrinted = system("printf \" HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}GB\" | lpr -P Stage2")
+          labelPrinted = system("printf \" HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\" | lpr -P Stage2")
           hddStatus.rewind
           memoryStatus.rewind
         end
