@@ -20,7 +20,7 @@ class FalseClass
     end
 end
 
-SIZES = [80, 120, 160, 250, 256, 500, 1000].freeze
+SIZES = [80, 120, 160, 250, 320, 256, 500, 1000].freeze
 
 def findImagesFor(manufacturer, folder, hash)
     dirHash = hash.clone
@@ -168,7 +168,9 @@ get '/' do
           hddStatus.rewind
           memoryStatus.rewind
         end
-      else hddStatus.rewind
+      else
+        hddStatus.rewind
+        memoryStatus.rewind
       end
     end
     erb :test, locals: {
