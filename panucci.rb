@@ -167,12 +167,17 @@ get '/' do
           labelPrinted = system("printf \" HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\" | lpr -P Stage2")
           hddStatus.rewind
           memoryStatus.rewind
+        else
+          memoryStatus.rewind
+          hddStatus.rewind
         end
       else
         hddStatus.rewind
         memoryStatus.rewind
       end
     end
+    hddStatus.rewind
+    memoryStatus.rewind
     erb :test, locals: {
         totalRam: totalRam,
         memoryStatus: memoryStatus.read,
