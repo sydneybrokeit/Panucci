@@ -93,9 +93,9 @@ if !ENV['DEBUG']
     memoryStatus.write('Testing In Progress')
     memTestPID = fork do
         status = system("sudo memtester #{memTestAmt} 1").passfail
+        memoryStatus.truncate(status.length)
         memoryStatus.rewind
         memoryStatus.write(status.to_s)
-        memoryStatus.truncate(status.length)
         exit
     end
 
@@ -164,7 +164,7 @@ get '/' do
         if memoryStatus.read != "Testing In Progress"
           hddStatus.rewind
           memoryStatus.rewind
-          labelPrinted = system("printf \" HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}\" | lpr -P Stage2")
+          labelPrinted = system("printf \" HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\nSerial: #{sysInfo[:serial]}\nCPU: #{sysInfo[:proc]}\nHDD Size: #{humanReadableSize}GB\nRAM Size: #{totalRam}GB\" | lpr -P Stage2")
           hddStatus.rewind
           memoryStatus.rewind
         end
