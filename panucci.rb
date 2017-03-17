@@ -160,11 +160,11 @@ get '/' do
     memoryStatus.rewind
     hddStatus.rewind
     if labelPrinted == false
-      if memoryStatus.read != "Testing In Progress"
-        if hddStatus.read != "Testing In Progress"
+      if ["PASS", "FAIL"].include?(memoryStatus.read)
+        if ["PASS", "FAIL", "ERROR: SMART Not Supported by Drive"].include?(hddStatus.read)
           hddStatus.rewind
           memoryStatus.rewind
-          labelPrinted = system("printf \" Date: #{Date.today.to_s}\n HDD: #{hddStatus.read}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\" | lpr -P Stage2")
+          labelPrinted = system("printf \" Date: #{Date.today.to_s}\n HDD: #{hddStatus.read[0,4]}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\" | lpr -P Stage2")
           hddStatus.rewind
           memoryStatus.rewind
         else
