@@ -9,3 +9,4 @@ doc/*.gz
 doc/*.fls
 doc/*.out
 data
+config.rb
