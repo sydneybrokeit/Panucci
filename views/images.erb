@@ -28,14 +28,20 @@
 
 <% if params["folder"];  folder="#{params["folder"]}/"; else; folder = ""; end; imagesList = findImagesFor(params["manufacturer"], folder , dir_listing) %>
     <% if Dir[ENV['IMAGES_DIR']  + "/" + params["manufacturer"] + "/#{params["folder"]}" + '/sda-pt.sf'].empty? && imagesList  %>
-    <% imagesList.each do |key, value| %>
+    <% #imagesList.each do |key, value| %>
+    <% dirs = [] %>
+    <% imagesList.each do |dir| %>
+      <% dirs.push(dir["text"]) %>
+    <% end %>
+    <% dirs.sort! %>
+    <% dir.each do |dir| %>
     <% if !File.exist?(ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf') %>
     <% puts ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf' %>
     <% puts "not image" %>
-    <div class="card image" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{key["text"]}"%>'" style="cursor: pointer;">
-    <% if params["folder"]; params["folder"] = params["folder"] + key["text"]; else; params["folder"] =  key["text"]; end %>
+    <div class="card image" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{dir}"%>'" style="cursor: pointer;">
+    <% if params["folder"]; params["folder"] = params["folder"] + dir; else; params["folder"] =  dir; end %>
         <i class="fa fa-folder-open fa-4x"></i>
-        <h2 class="image-model"><%= key["text"] %></h2>
+        <h2 class="image-model"><%= dir %></h2>
     </div>
     <% else %>
 <% redirect "/clone?image=#{params["manufacturer"]}/#{params["folder"]}/#{size.to_s}" %>
