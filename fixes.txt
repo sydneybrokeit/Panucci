@@ -1,0 +1,6 @@
+Chromium
+--bwsi (browse without signin?)
+
+Keyring
+seahorse
+change password on default keyring

@@ -8,3 +8,4 @@ doc/*.log
 doc/*.gz
 doc/*.fls
 doc/*.out
+data
