@@ -1,3 +1,5 @@
+require 'scrubdeku'
+
 HDDSKUS ={
   "80GBSATA3" => "80",
   "160GBSATA3" => "160",
@@ -27,6 +29,8 @@ RAMSKUS= {
   "2GBDDR2E" => 2,
   "4GBDDR2E" => 4,
   "8GBDDR2E" => 8,
+  "1GBDDR2U" => 1,
+  "2GBDDR2U" => 2,
   "1GBDDR3U" => 1,
   "2GBDDR3U" => 2,
   "4GBDDR3U" => 4,
@@ -41,28 +45,34 @@ RAMSKUS= {
   "8GBDDR3E" => 8
 }
 
-class Order
-  def computer_kit_listing
-    kit_listing = self.kit_listing
-    kit_listing.keys.each do |key|
-      #puts key
-      #puts kit_listing[key]
-      #puts kit_listing[key]['components']
-      hdd = kit_listing[key]['components'].keys.select{ |component| HDDSKUS.include?(component)}[0]
-      ram = kit_listing[key]['components'].keys.select{ |component| RAMSKUS.include?(component)}[0]
-      ramQty = kit_listing[key]['components'][ram]["qtyEach"]
-      totalRam = ramQty.to_i * RAMSKUS[ram]
-      kit_listing[key]['spec'] = {'hdd' => HDDSKUS[hdd].to_i, 'ram' => totalRam}
-    end
-    return kit_listing
-  end
+load 'config.rb'
 
-  def display_kit
-    listing = self.computer_kit_listing
-    puts "Kit SKU\t\t\tRAM\t\t\tHDD"
-    listing.keys.each do |key|
-      puts "#{listing[key]['description']}"
-      puts "#{key}\t\t#{listing[key]['spec']['ram']}\t\t#{listing[key]['spec']['hdd']}"
+module Scrub
+  class Order
+    def computer_kit_listing
+      kit_listing = self.kit_listing
+      kit_listing.keys.each do |key|
+        hdd = ""
+        ram = ""
+        puts key
+        puts kit_listing[key]
+        puts kit_listing[key]['components']
+        hdd = kit_listing[key]['components'].keys.select{ |component| HDDSKUS.include?(component)}[0]
+        ram = kit_listing[key]['components'].keys.select{ |component| RAMSKUS.include?(component)}[0]
+        ramQty = kit_listing[key]['components'][ram]["qtyEach"]
+        totalRam = ramQty.to_i * RAMSKUS[ram]
+        kit_listing[key]['spec'] = {'hdd' => HDDSKUS[hdd].to_i, 'ram' => totalRam}
+      end
+      return kit_listing
+    end
+
+    def display_kit
+      listing = self.computer_kit_listing
+      puts "Kit SKU\t\t\tRAM\t\t\tHDD"
+      listing.keys.each do |key|
+        puts "#{listing[key]['description']}"
+        puts "#{key}\t\t#{listing[key]['spec']['ram']}\t\t#{listing[key]['spec']['hdd']}"
+      end
     end
   end
 end

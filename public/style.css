@@ -335,3 +335,21 @@ pre {
 	font-weight:100;
 	width:100%;
 }
+
+table.select {
+  color: #555555;
+  text-align: center;
+}
+
+div.select{
+  margin: 0 auto;
+  text-align: center;
+}
+
+h2.FAIL {
+  color: #E53935;
+}
+
+h2.PASS {
+  color: #43A047;
+}

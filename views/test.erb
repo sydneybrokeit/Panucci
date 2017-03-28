@@ -1,6 +1,8 @@
 <%@subtitle='/<span id="small">diagnostics</span>'%>
 <% memGood = false %>
 <% hddGood = false %>
+<% memMatch = true %>
+<% hddMatch = true %>
 <div class="main-specs">
       <script type="text/javascript">
       setTimeout(function () {
@@ -19,6 +21,8 @@
                 <%= sysInfo[:serial]%></p>
             <p class="model">CPU:
                 <%= sysInfo[:proc]%></p>
+            <% unless orderTable == {} %></br></br><p class="verification">Buildout:
+                <%= orderTable['desc']%></p><% end %>
         </div>
         <div class="right-specs"></div>
     </div>
@@ -29,6 +33,10 @@
         <div class="specs">
             <h1>Hard Drive</h1>
             <h2 class="size">Size: <%=humanReadableSize%>GB</h2>
+            <% unless orderTable == {} %>
+              <% hddMatch= (humanReadableSize.to_i == orderTable['hdd'].to_i) %>
+              <h2 class="<%= hddMatch.passfail%>">Required: <%= orderTable['hdd'] %>GB</h2>
+            <% end %>
         </div>
         <% if hddStatus.include? "FAIL" %>
         <i class="fa fa-times fa-3x failure fa-right"></i>
@@ -46,6 +54,9 @@
             <h1>Memory</h1>
             <h2 class="size">Total RAM:
                 <%= totalRam %>GB</h2>
+                <% unless orderTable == {} %>
+                <% memMatch = (totalRam.to_i == orderTable['ram'])%>
+                <h2 class="<%= memMatch.passfail%>">Required: <%= orderTable['ram']%>GB</h2><% end %>
         </div>
         <% if memoryStatus.include? "FAIL" %>
         <% memGood = false %>
@@ -59,7 +70,7 @@
     </div>
 
 </div>
-<% if memGood == true && hddGood == true%>
+<% if memGood == true && hddGood == true && memMatch == true && hddMatch == true%>
 <div class="next-step">
     <a href="/clone" class="fa fa-arrow-right fa-4x success next"></a>
 </div>

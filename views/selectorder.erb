@@ -1,0 +1,16 @@
+<div class="select"><table class="select">
+  <tr>
+    <th>SKU</th>
+    <th>Description</th>
+    <th>HDD</th>
+    <th>RAM</th>
+  </tr>
+    <% orderData.keys.each do |key| %>
+    <tr>
+      <td><a href="/parseImage?sku=<%=key%>"><%= key %></a></td>
+      <td><%= orderData[key]['description'] %></td>
+      <td><%= orderData[key]['spec']['hdd'] %>GB</td>
+      <td><%= orderData[key]['spec']['ram'] %>GB</td>
+    </tr>
+    <%end%>
+</table></div>

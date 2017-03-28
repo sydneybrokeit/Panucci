@@ -4,6 +4,9 @@ require 'dotenv/load' #used to allow configuration used environment variables or
 require 'yaml'
 require 'find'
 require 'pathname'
+
+load 'panucciLibs.rb'
+puts SCSERVER
 ####################################################################
 # Extend the True and False singletons to include a passfail method
 ####################################################################
@@ -19,6 +22,10 @@ class FalseClass
         'FAIL'
     end
 end
+
+orderTable = {}
+orderData = {}
+scclient = Scrub::SCClient.new(SCSERVER, SCUSER, SCPASSWORD)
 
 SIZES = [80, 120, 160, 250, 320, 256, 500, 1000].freeze
 
@@ -156,6 +163,46 @@ end
 
 sysInfo = getSysInfo
 
+get '/orderrequest' do
+    erb :orderreq
+end
+
+post '/ordersubmit' do
+  ordernumber = params[:orderno]
+  begin
+    order = Scrub::Order.new(scclient.order_data(ordernumber.to_i))
+  rescue Net::OpenTimeout
+    retry
+  end
+  orderData = order.computer_kit_listing
+  puts orderData
+  case
+  when orderData.length == 1
+    orderTable['sku'] = orderData.keys[0]
+    orderTable['desc'] = orderData[orderTable['sku']]['description']
+    orderTable['ram'] = orderData[orderTable['sku']]['spec']['ram']
+    orderTable['hdd'] = orderData[orderTable['sku']]['spec']['hdd']
+    redirect '/'
+  when orderData.length > 1
+    redirect '/orderselect'
+  end
+end
+
+get '/orderselect' do
+  erb :selectorder, locals: {
+    orderData: orderData
+  }
+end
+
+get '/parseImage' do
+  sku = params[:sku]
+  orderTable['sku'] = sku
+  orderTable['desc'] = orderData[sku]['description']
+  orderTable['ram'] = orderData[sku]['spec']['ram']
+  orderTable['hdd'] = orderData[sku]['spec']['hdd']
+  redirect '/'
+end
+
 get '/' do
     memoryStatus.rewind
     hddStatus.rewind
@@ -183,7 +230,8 @@ get '/' do
         memoryStatus: memoryStatus.read,
         hddStatus: hddStatus.read,
         sysInfo: sysInfo,
-        humanReadableSize: humanReadableSize
+        humanReadableSize: humanReadableSize,
+        orderTable: orderTable
     }
 end
 get '/clone' do
