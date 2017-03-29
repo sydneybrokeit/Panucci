@@ -23,8 +23,16 @@ class FalseClass
     end
 end
 
-orderTable = {}
-orderData = {}
+
+$orderTable = {}
+$orderData = {}
+
+def populateOrderTable(sku)
+  $orderTable['sku'] = sku
+  $orderTable['desc'] = $orderData[sku]['description']
+  $orderTable['ram'] = $orderData[sku]['spec']['ram']
+  $orderTable['hdd'] = $orderData[sku]['spec']['hdd']
+end
 scclient = Scrub::SCClient.new(SCSERVER, SCUSER, SCPASSWORD)
 
 SIZES = [80, 120, 160, 250, 320, 256, 500, 1000].freeze
@@ -174,32 +182,27 @@ post '/ordersubmit' do
   rescue Net::OpenTimeout
     retry
   end
-  orderData = order.computer_kit_listing
-  puts orderData
+  $orderData = order.computer_kit_listing
+  puts $orderData
   case
-  when orderData.length == 1
-    orderTable['sku'] = orderData.keys[0]
-    orderTable['desc'] = orderData[orderTable['sku']]['description']
-    orderTable['ram'] = orderData[orderTable['sku']]['spec']['ram']
-    orderTable['hdd'] = orderData[orderTable['sku']]['spec']['hdd']
+  when $orderData.length == 1
+      sku = $orderData.keys[0]
+      populateOrderTable(sku)
     redirect '/'
-  when orderData.length > 1
+  when $orderData.length > 1
     redirect '/orderselect'
   end
 end
 
 get '/orderselect' do
   erb :selectorder, locals: {
-    orderData: orderData
+    orderData: $orderData
   }
 end
 
 get '/parseImage' do
   sku = params[:sku]
-  orderTable['sku'] = sku
-  orderTable['desc'] = orderData[sku]['description']
-  orderTable['ram'] = orderData[sku]['spec']['ram']
-  orderTable['hdd'] = orderData[sku]['spec']['hdd']
+  populateOrderTable(sku)
   redirect '/'
 end
 
@@ -211,7 +214,7 @@ get '/' do
         if ["PASS", "FAIL", "ERROR: SMART Not Supported by Drive"].include?(hddStatus.read)
           hddStatus.rewind
           memoryStatus.rewind
-          labelPrinted = system("ssh er2@10.0.6.82 \'printf \" Date: #{Date.today.to_s}\n HDD: #{hddStatus.read[0,4]}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\" | lpr -P Stage2\'")
+          labelPrinted = system("ssh er2@10.0.2.143 \'printf \" Date: #{Date.today.to_s}\n HDD: #{hddStatus.read[0,4]}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\" | lpr -P Stage2\'")
           hddStatus.rewind
           memoryStatus.rewind
         else
@@ -231,7 +234,7 @@ get '/' do
         hddStatus: hddStatus.read,
         sysInfo: sysInfo,
         humanReadableSize: humanReadableSize,
-        orderTable: orderTable
+        orderTable: $orderTable
     }
 end
 get '/clone' do

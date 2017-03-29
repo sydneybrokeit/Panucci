@@ -1,51 +1,7 @@
 require 'scrubdeku'
 
-HDDSKUS ={
-  "80GBSATA3" => "80",
-  "160GBSATA3" => "160",
-  "250GBSATA3" => "250",
-  "320GBSATA3" => "320",
-  "500GBSATA3" => "500",
-  "1TBSATA3" => "1000",
-  "80GBSATA2" => "80",
-  "160GBSATA2" => "160",
-  "250GBSATA2" => "250",
-  "320GBSATA2" => "320",
-  "500GBSATA2" => "500",
-  "1TBSATA2" => "1000",
-  "120GBSSD2" => "120",
-  "250GBSSD2" => "250",
-  "500GBSSD2" => "500",
-  "80GBSATA2S" => "80",
-  "160GBSATA2S" => "160",
-  "250GBSATA2S" => "250",
-  "320GBSATA2S" => "320",
-  "500GBSATA2S" => "500",
-  "1TBSATA2S" => "1000"
-}
-
-RAMSKUS= {
-  "1GBDDR2E" => 1,
-  "2GBDDR2E" => 2,
-  "4GBDDR2E" => 4,
-  "8GBDDR2E" => 8,
-  "1GBDDR2U" => 1,
-  "2GBDDR2U" => 2,
-  "1GBDDR3U" => 1,
-  "2GBDDR3U" => 2,
-  "4GBDDR3U" => 4,
-  "8GBDDR3U" => 8,
-  "1GBDDR3S" => 1,
-  "2GBDDR3S" => 2,
-  "4GBDDR3S" => 4,
-  "8GBDDR3S" => 8,
-  "1GBDDR3E" => 1,
-  "2GBDDR3E" => 2,
-  "4GBDDR3E" => 4,
-  "8GBDDR3E" => 8
-}
-
 load 'config.rb'
+load 'config/skus.rb'
 
 module Scrub
   class Order
