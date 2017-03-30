@@ -22,7 +22,11 @@
             <p class="model">CPU:
                 <%= sysInfo[:proc]%></p>
             <% unless orderTable == {} %></br></br><p class="verification">Buildout:
-                <%= orderTable['desc']%></p><% end %>
+                <%= orderTable['desc']%></p>
+            <p class="verification <%= modelMatch.passfail %>">Model: <%= orderTable['model'].join(' ') %></p>
+            <p class="verification">OS: <%= orderTable['os'] %></p>
+            <p class="verification <%= procMatch.passfail %>">Proc: <%= orderTable['proc'] %></p>
+              <% end %>
         </div>
         <div class="right-specs"></div>
     </div>

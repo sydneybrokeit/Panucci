@@ -23,7 +23,11 @@ class FalseClass
     end
 end
 
+modelMatch = false
+procMatch = false
 
+$ffRegex = /MT|DT|SFF|USFF|USDT|Laptop/
+$modelRegex = Regexp.union($ffRegex, /[0-9]/)
 $orderTable = {}
 $orderData = {}
 
@@ -32,6 +36,30 @@ def populateOrderTable(sku)
   $orderTable['desc'] = $orderData[sku]['description']
   $orderTable['ram'] = $orderData[sku]['spec']['ram']
   $orderTable['hdd'] = $orderData[sku]['spec']['hdd']
+  splitDesc = $orderTable['desc'].split(" ")
+  puts splitDesc.select{|x| $ffRegex.match(x)}.to_s
+  ffIndex = splitDesc.index(splitDesc.select{|x| $ffRegex.match(x)}[0])
+  puts ffIndex
+  $orderTable['model'] = splitDesc[0..ffIndex].select{|x| $modelRegex.match(x)}
+
+  puts $orderTable
+  osIndex = splitDesc.index(splitDesc.select{|x| /Win[dows]?/.match(x)}[0])
+  osString = splitDesc[osIndex, 3]
+  puts osString
+  osString[0] = osString[0].slice(0..2)
+  case osString[2]
+  when "Professional"
+    osString[2] = "Pro"
+  when "Home"
+    osString[2] = "HmPrem"
+  when "Hm"
+    osString[2] = "HmPrem"
+  end
+  $orderTable['os'] = osString.join('')
+  procEndIndex = splitDesc.index{|x| /[0-9]{1,2}GB/.match(x)}-1
+  procArray = splitDesc[ffIndex+1..procEndIndex]
+  procArray.delete(procArray.find{|x| /GHz/.match(x)})
+  $orderTable['proc'] = procArray.find{|x| /[0-9]{3,}/.match(x)}
 end
 scclient = Scrub::SCClient.new(SCSERVER, SCUSER, SCPASSWORD)
 
@@ -207,6 +235,20 @@ get '/parseImage' do
 end
 
 get '/' do
+    unless $orderTable == {}
+      unless $orderTable['model'].include?("Laptop")
+        if $orderTable['model'].all? {|x| sysInfo[:model].include?(x)}
+          modelMatch = true
+        end
+      else
+        if $orderTable['model']-["Laptop"].all? {|x| sysInfo[:model].include?(x)}
+          modelMatch = true
+        end
+      end
+      if sysInfo[:proc].include?($orderTable['proc'])
+        procMatch = true
+      end
+    end
     memoryStatus.rewind
     hddStatus.rewind
     if labelPrinted == false
@@ -234,7 +276,9 @@ get '/' do
         hddStatus: hddStatus.read,
         sysInfo: sysInfo,
         humanReadableSize: humanReadableSize,
-        orderTable: $orderTable
+        orderTable: $orderTable,
+        modelMatch: modelMatch,
+        procMatch: procMatch
     }
 end
 get '/clone' do

@@ -346,10 +346,10 @@ div.select{
   text-align: center;
 }
 
-h2.FAIL {
-  color: #E53935;
+.FAIL {
+  color: #E53935!important;
 }
 
-h2.PASS {
-  color: #43A047;
+.PASS {
+  color: #43A047!important;
 }
