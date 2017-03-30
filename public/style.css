@@ -1,355 +1,386 @@
-
-
 /*@import "materialize/css/materialize.css";*/
 
 @font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/s/roboto/v15/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
+    font-family: 'Roboto';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/s/roboto/v15/CWB0XYA8bzo0kSThX0UTuA.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215;
 }
 
 .dark-primary-color {
-	background:#455A64;
+    background: #455A64;
 }
 
 .default-primary-color {
-	background:#607D8B;
+    background: #607D8B;
 }
 
 .light-primary-color {
-	background:#CFD8DC;
+    background: #CFD8DC;
 }
 
 .text-primary-color {
-	color:#FFF;
+    color: #FFF;
 }
 
 .accent-color {
-	background:#FF5722;
+    background: #FF5722;
 }
 
 .primary-text-color {
-	color:#212121;
+    color: #212121;
 }
 
 .secondary-text-color {
-	color:#757575;
+    color: #757575;
 }
 
 .divider-color {
-	border-color:#BDBDBD;
+    border-color: #BDBDBD;
 }
 
 body {
-	font-family:'Roboto',sans-serif!important;
-	background-color:#fafafa;
-	color:#fff;
-	width:100%;
-	overflow-x:hidden;
+    font-family: 'Roboto', sans-serif!important;
+    background-color: #fafafa;
+    color: #fff;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 * {
-	padding:0;
-	margin:0;
+    padding: 0;
+    margin: 0;
 }
 
 .intro-header {
-	width:100%;
-	margin:0 auto;
-	padding:25px;
-	background:#607D8B;
+    width: 100%;
+    margin: 0 auto;
+    padding: 25px;
+    background: #607D8B;
 }
 
 .intro-header h1 {
-	font-size:55px;
-	font-weight:100;
-	margin-left:25px;
+    font-size: 55px;
+    font-weight: 100;
+    margin-left: 25px;
 }
 
 .subcards {
-	width:81%;
-	display:flex;
-	margin:0 auto;
-	padding:12px;
-	flex-wrap:wrap;
-	align-items:flex-start;
-	flex-direction:row;
+    width: 81%;
+    display: flex;
+    margin: 0 auto;
+    padding: 12px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    flex-direction: row;
 }
 
 .card h1 {
-	margin-top:-5px;
-	font-weight:100;
+    margin-top: -5px;
+    font-weight: 100;
 }
 
 .card {
-	box-shadow:0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);
-	flex-grow:1;
-	display:flex;
-	align-self:flex-start;
-	margin:0 auto;
-	padding:24px;
-	background-color:#fff;
-	text-align:center;
-	color:#212121;
-	margin-top:25px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    flex-grow: 1;
+    display: flex;
+    align-self: flex-start;
+    margin: 0 auto;
+    padding: 24px;
+    background-color: #fff;
+    text-align: center;
+    color: #212121;
+    margin-top: 25px;
 }
 
 .card h2 {
-	font-weight:100;
-	font-size:25px;
-	flex-grow:1;
+    font-weight: 100;
+    font-size: 25px;
+    flex-grow: 1;
 }
 
 .card .fa-right {
-	text-align:right;
-	font-size:5em;
+    text-align: right;
+    font-size: 5em;
 }
 
 .harddrive {
-	margin-right:10px;
+    margin-right: 10px;
 }
 
 .card .specs {
-	flex-grow:1;
-	text-align:left;
-	padding-left:24px;
-	padding-top:10px;
+    flex-grow: 1;
+    text-align: left;
+    padding-left: 24px;
+    padding-top: 10px;
 }
 
 pre {
-	font-family:monospace;
-	text-align:center;
-	animation:spin 10s linear infinite;
+    font-family: monospace;
+    text-align: center;
+    animation: spin 10s linear infinite;
 }
 
 .success {
-	color:#43A047;
+    color: #43A047;
 }
 
 .failure {
-	color:#E53935;
+    color: #E53935;
 }
 
 .destructive {
-	background-color:#E53935!important;
+    background-color: #E53935!important;
 }
 
-.main-specs h1,.main-specs p {
-	margin-left:25px;
-	text-align:left;
+.main-specs h1, .main-specs p {
+    margin-left: 25px;
+    text-align: left;
 }
 
 .main-specs .left-specs p {
-	font-size:18px;
-	display:block;
-	margin-left:0;
-	padding-left:8px;
-	border-left:5px solid #009688;
-	color:#009688;
+    font-size: 18px;
+    display: block;
+    margin-left: 0;
+    padding-left: 8px;
+    border-left: 5px solid #009688;
+    color: #009688;
 }
 
 .main-specs .left-specs {
-	flex-grow:2;
+    flex-grow: 2;
 }
 
 .main-specs .right-specs {
-	float:right;
+    float: right;
 }
 
 .main-specs .fa {
-	font-size:5em;
-	width:auto;
-	float:left;
-	padding:8px;
-	margin-right:12px;
-	margin-left:-2px;
+    font-size: 5em;
+    width: auto;
+    float: left;
+    padding: 8px;
+    margin-right: 12px;
+    margin-left: -2px;
 }
 
 .inner-specs {
-	display:flex;
+    display: flex;
 }
 
 .main-specs {
-	box-shadow:0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);
-	width:80%;
-	margin:0 auto;
-	padding:12px;
-	background-color:#fff;
-	margin-top:25px;
-	text-align:center;
-	color:#212121;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    width: 80%;
+    margin: 0 auto;
+    padding: 12px;
+    background-color: #fff;
+    margin-top: 25px;
+    text-align: center;
+    color: #212121;
 }
 
 #small {
-	font-size:22px;
-	line-height:30px;
+    font-size: 22px;
+    line-height: 30px;
 }
 
 .next-step {
-	width:100%;
-	text-align:center;
+    width: 100%;
+    text-align: center;
 }
 
 .next {
-	text-decoration:none;
-	padding:12px;
+    text-decoration: none;
+    padding: 12px;
 }
 
 #disabled {
-	color:gray;
+    color: gray;
 }
 
 .fa-spin {
-	-webkit-animation:fa-spin 2s infinite ease-in-out!important;
-	animation:fa-spin 2s infinite ease-in-out!important;
+    -webkit-animation: fa-spin 2s infinite ease-in-out!important;
+    animation: fa-spin 2s infinite ease-in-out!important;
 }
 
+
 /* Cloning Page */
+
 #progress {
-	width:100%;
-	background-color:lightgray;
+    width: 100%;
+    background-color: lightgray;
 }
 
 #bar {
-	width:0;
-	height:30px;
-	background-color:green;
+    width: 0;
+    height: 30px;
+    background-color: green;
 }
 
 #progress-label {
-	text-align:center;
-/* If you want to center it */
-	line-height:30px;
-	padding:2px;
-/* Set the line-height to the same as the height of the progress bar container, to center it vertically */
-	color:#fff;
+    text-align: center;
+    /* If you want to center it */
+    line-height: 30px;
+    padding: 2px;
+    /* Set the line-height to the same as the height of the progress bar container, to center it vertically */
+    color: #fff;
 }
 
-.inner-confirm {
-}
+.inner-confirm {}
 
 .inner-select {
-	display:none;
+    display: none;
 }
 
 .button {
-	display:inline-block;
-	position:relative;
-	width:120px;
-	height:32px;
-	border-radius:2px;
-	font-size:15px;
-	line-height:2em;
-	text-transform:uppercase;
-	background-color:#4285f4;
-	color:#fff;
-	text-decoration:none;
+    display: inline-block;
+    position: relative;
+    width: 120px;
+    height: 32px;
+    border-radius: 2px;
+    font-size: 15px;
+    line-height: 2em;
+    text-transform: uppercase;
+    background-color: #4285f4;
+    color: #fff;
+    text-decoration: none;
 }
 
-.cloning h1,p {
-	text-align:center;
+.cloning h1, p {
+    text-align: center;
 }
 
 .inner-imaging {
-	display:flex;
-	opacity:0;
-	transition:opacity .5s linear;
-	-webkit-transition:opacity .5s linear;
-	-moz-transition:opacity .5s linear;
-	-o-transition:opacity .5s linear;
+    display: flex;
+    opacity: 0;
+    transition: opacity .5s linear;
+    -webkit-transition: opacity .5s linear;
+    -moz-transition: opacity .5s linear;
+    -o-transition: opacity .5s linear;
 }
 
 .center {
-	flex-grow:1;
-	margin:20px;
+    flex-grow: 1;
+    margin: 20px;
 }
 
 .cloning {
-	box-shadow:0 3px 6px rgba(0,0,0,0.16),0 3px 6px rgba(0,0,0,0.23);
-	width:80%;
-	margin:0 auto;
-	padding:12px;
-	background-color:#fff;
-	margin-top:25px;
-	text-align:center;
-	color:#212121;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    width: 80%;
+    margin: 0 auto;
+    padding: 12px;
+    background-color: #fff;
+    margin-top: 25px;
+    text-align: center;
+    color: #212121;
 }
 
+
 /* Images Page */
+
 .manufacturers {
-	width:100%;
-	margin:0 auto;
-	display:flex;
-	align-items:flex-start;
-	flex-direction:row;
-	background:#607D8B;
+    width: 100%;
+    margin: 0 auto;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: row;
+    background: #607D8B;
 }
 
 .manufacturer {
-	box-shadow:none;
-	background-color:inherit;
-	flex-grow:1;
-	display:flex;
-	align-self:flex-start;
-	margin:0 auto;
-	padding:24px;
-	text-align:center!important;
-	margin-top:25px;
+    box-shadow: none;
+    background-color: inherit;
+    flex-grow: 1;
+    display: flex;
+    align-self: flex-start;
+    margin: 0 auto;
+    padding: 24px;
+    text-align: center!important;
+    margin-top: 25px;
 }
 
 .tab-title {
-	text-align:center;
-	width:100%;
-	font-weight:lighter;
+    text-align: center;
+    width: 100%;
+    font-weight: lighter;
 }
 
 .tab-selected {
-	border-bottom:10px solid #FF5722;
+    border-bottom: 10px solid #FF5722;
 }
 
 .image-model {
-	text-align:left;
-	font-size:45px!important;
-	font-weight:100!important;
+    text-align: left;
+    font-size: 45px!important;
+    font-weight: 100!important;
 }
 
 .card .fa {
-	margin-right:12px;
+    margin-right: 12px;
 }
 
 .image {
-	width:300px;
-	margin:12px;
+    width: 300px;
+    margin: 12px;
 }
 
 .image .fa {
-	color:#FF5722;
-	line-height:1.8em;
+    color: #FF5722;
+    line-height: 1.8em;
 }
 
 .error {
-	color:#757575;
-	text-align:center;
-	font-weight:100;
-	width:100%;
+    color: #757575;
+    text-align: center;
+    font-weight: 100;
+    width: 100%;
 }
 
 table.select {
-  color: #555555;
-  text-align: center;
+    color: #555555;
+    text-align: center;
 }
 
-div.select{
-  margin: 0 auto;
-  text-align: center;
+div.select {
+    margin: 0 auto;
+    text-align: center;
 }
 
 .FAIL {
-  color: #E53935!important;
+    color: #E53935!important;
 }
 
 .PASS {
-  color: #43A047!important;
+    color: #43A047!important;
+}
+
+a.override-button {
+    position: relative;
+    width: 300px;
+    height: 50px;
+    line-height: 32px;
+    border-radius: 2px;
+    font-size: 0.9em;
+    color: #646464;
+    display: flex;
+    align-items: center;
+    background-color: #eee;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.2s;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    text-decoration: none;
+    margin-top: 14px;
+}
+
+a.override-button img {
+    width: 50px;
+    border-radius: 100%;
+    flex-shrink: 1;
+}
+
+a.override-button span {
+    flex-grow: 1;
+    font-size: 20px;
+    text-decoration: none;
 }
