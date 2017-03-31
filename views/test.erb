@@ -4,11 +4,6 @@
 <% memMatch = true %>
 <% hddMatch = true %>
 <div class="main-specs">
-  <script type="text/javascript">
-  setTimeout(function () {
-    location.reload();
-  }, 12 * 1000);
-  </script>
     <h1 class="fa fa-desktop"></h1>
     <h1>System Information:</h1>
     <div class="inner-specs">
@@ -44,9 +39,9 @@
               <% if didSearch == false%>
               <div class="order-button">
                 <form method="POST" action="/ordersubmit">
-              <input type="text" name="orderno" placeholder="Order Number">
-              <button type="submit" class="btn btn-success">
-  <i class="fa fa-search"></i>
+              <input id="search" type="text" name="orderno" placeholder="Order Number">
+              <button type="submit" class="btn btn-success" onclick="document.getElementById('searchbutton').className = 'fa fa-circle-o-notch fa-spin fa-3x';">
+  <i   id="searchbutton" class="fa fa-search"></i>
 </button>
               </form>
             </div>
@@ -68,10 +63,10 @@
             <% end %>
         </div>
         <% if hddStatus.include? "FAIL" %>
-        <i class="fa fa-times fa-3x failure fa-right"></i>
+        <i id="hddTest" class="fa fa-times fa-3x failure fa-right"></i>
         <% hddGood = false %>
         <% elsif hddStatus.include? "PASS" %>
-        <i class="fa fa-check fa-3x success fa-right"></i>
+        <i id="hddTest" class="fa fa-check fa-3x success fa-right"></i>
         <% hddGood = true %>
     <% else %>
         <i class="fa fa-circle-o-notch fa-spin fa-3x fa-right"></i>
@@ -89,10 +84,10 @@
         </div>
         <% if memoryStatus.include? "FAIL" %>
         <% memGood = false %>
-        <i class="fa fa-times fa-3x failure fa-right"></i>
+        <i id="memTest" class="fa fa-times fa-3x failure fa-right"></i>
         <% elsif memoryStatus.include? "PASS" %>
         <% memGood = true %>
-        <i class="fa fa-check fa-3x success fa-right"></i>
+        <i id="memTest" class="fa fa-check fa-3x success fa-right"></i>
     <% else %>
         <i class="fa fa-circle-o-notch fa-spin fa-3x fa-right"></i>
         <% end %>
@@ -113,3 +108,23 @@
     <a disabled="disabled" class="fa fa-arrow-right fa-4x success next" id="disabled"></a>
 </div>
 <% end %>
+<script type="text/javascript">
+
+  var search = document.getElementById("search");
+    setTimeout(function () {
+  if (document.getElementById("memTest") &&  document.getElementById("hddTest")){
+    console.log("should not reload");
+  }else{
+    if (search !== null && search.value === "" && search.value === " "){
+        reload();
+    }else{
+      console.log("we shall not reload");
+    }
+  }
+}, 12 * 1000);
+
+function reload(){
+  location.reload();
+}
+
+</script>
