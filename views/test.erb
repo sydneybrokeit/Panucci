@@ -27,7 +27,9 @@
             <p class="verification <%= modelMatch.passfail %>">Model: <%= orderTable['model'].join(' ') %></p>
             <p class="verification">OS: <%= orderTable['os'] %></p>
             <p class="verification <%= procMatch.passfail %>">Proc: <%= orderTable['proc'] %></p>
-                <a class="override-button" href="/clone"><img src="/smug.png"><span>I know what I'm doing</span></a>
+            <a href="/smug" accesskey="r"></a>
+              <%else%>
+              <a href="/orderrequest" class="override-button"><span>Input An Order Number</span></a>
               <% end %>
         </div>
         <div class="right-specs"></div>
@@ -76,7 +78,12 @@
     </div>
 
 </div>
-<% if memGood == true && hddGood == true && memMatch == true && hddMatch == true%>
+<% if orderTable == {} %>
+  <% pass = memGood && hddGood %>
+<% else %>
+  <% pass = memGood && hddGood && memMatch && hddMatch && procMatch && modelMatch %>
+<% end %>
+<% if pass %>
 <div class="next-step">
     <a href="/clone" class="fa fa-arrow-right fa-4x success next"></a>
 </div>

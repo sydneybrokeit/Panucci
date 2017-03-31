@@ -296,6 +296,15 @@ get '/images' do
     }
 end
 
+get '/smug' do
+  erb :smug
+end
+
+get '/smugYes' do
+  $orderTable = {}
+  redirect '/'
+end
+
 imageStarted = false
 get '/startClone' do
   image = params[:image]
