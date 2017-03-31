@@ -165,7 +165,6 @@ pre {
     margin-left: -2px;
 }
 
-
 .inner-specs {
     display: flex;
 }
@@ -201,37 +200,48 @@ pre {
 }
 
 .fa-spin {
-
-  color: #2962FF!important;
-  -webkit-animation: rotateFa 2s infinite ease-in-out!important;
-  -moz-animation: rotateFa 2s infinite ease-in-out!important;
-  -o-animation: rotateFa 2s infinite ease-in-out!important;
-  animation: rotateFa 2s infinite ease-in-out!important;
+    color: #2962FF!important;
+    -webkit-animation: rotateFa 2s infinite ease-in-out!important;
+    -moz-animation: rotateFa 2s infinite ease-in-out!important;
+    -o-animation: rotateFa 2s infinite ease-in-out!important;
+    animation: rotateFa 2s infinite ease-in-out!important;
 }
 
 @-webkit-keyframes rotateFa {
-  from { -webkit-transform: rotate(0deg); }
-  to { -webkit-transform: rotate(360deg); }
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
-
 @-moz-keyframes rotateFa {
-  from { -moz-transform: rotate(0deg); }
-  to { -moz-transform: rotate(360deg); }
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(360deg);
+    }
 }
 
 @-o-keyframes rotateFa {
-  from { -o-transform: rotate(0deg); }
-  to { -o-transform: rotate(360deg); }
+    from {
+        -o-transform: rotate(0deg);
+    }
+    to {
+        -o-transform: rotate(360deg);
+    }
 }
 
 @keyframes rotateFa {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
-
-
-
 
 
 /* Cloning Page */
@@ -347,6 +357,7 @@ pre {
 
 .card .fa {
     margin-right: 12px;
+    line-height: 1.5!important;
 }
 
 .image {
@@ -409,36 +420,42 @@ div.order-button span {
     text-decoration: none;
     padding-left: 14px;
 }
-div.order-button button{
-      background-color: transparent; /* Green */
-      border: none;
-      color: #000;
-      padding: 0;
-      text-align: center;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 5px;
-      flex-shrink: 1;
+
+div.order-button button {
+    background-color: transparent;
+    /* Green */
+    border: none;
+    color: #000;
+    padding: 0;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 5px;
+    flex-shrink: 1;
 }
 
 div.order-button button:focus {
-  outline: none;
-  color: gray;
+    outline: none;
+    color: gray;
 }
-div.order-button form{
-  display: flex;
-  height: 50%;
-  align-items: center;
-  margin: 0!important;
-  justify-content: flex-start;
+
+div.order-button form {
+    display: flex;
+    height: 50%;
+    align-items: center;
+    margin: 0!important;
+    justify-content: flex-start;
 }
-div.order-button input{
-  flex-grow: 1;
-  height: 40px;
+
+div.order-button input {
+    flex-grow: 1;
+    height: 40px;
 }
-div.order-button input:focus{
-  outline: none;
+
+div.order-button input:focus {
+    outline: none;
 }
+
 a.override-button {
     position: relative;
     width: 400px;
@@ -472,5 +489,56 @@ a.override-button span {
 }
 
 h1.black {
-  color: black!important;
+    color: black!important;
+}
+
+.verification {
+    border: none!important;
+    color: #000!important;
+}
+
+.passfail {
+    font-size: 30px!important;
+    margin: 0!important;
+    border: none!important;
+    padding: 0!important;
+    line-height: 0.6!important;
+}
+
+.ordertable {
+    margin-top: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.orderstatus {
+    flex-grow: 1;
+}
+
+.select {
+    border-collapse: collapse;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.select th {
+    min-width: 200px;
+    color: #fff;
+    height: 60px;
+}
+
+tr.header {
+    background-color: #000;
+    font-size: 30px;
+    padding: 12px;
+}
+
+.select tr {
+    font-size: 20px;
+    height: 40px;
+}
+
+.select tr:hover {
+    cursor: pointer;
 }

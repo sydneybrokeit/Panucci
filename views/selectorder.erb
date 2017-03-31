@@ -1,13 +1,14 @@
+<%@subtitle='/<span id="small">orders</span>'%>
 <div class="select"><table class="select">
-  <tr>
+  <tr class="header">
     <th>SKU</th>
     <th>Description</th>
     <th>HDD</th>
     <th>RAM</th>
   </tr>
     <% orderData.keys.each do |key| %>
-    <tr>
-      <td><a href="/parseImage?sku=<%=key%>"><%= key %></a></td>
+    <tr onclick="window.location='/parseImage?sku=<%=key%>'">
+      <td><%= key %></td>
       <td><%= orderData[key]['description'] %></td>
       <td><%= orderData[key]['spec']['hdd'] %>GB</td>
       <td><%= orderData[key]['spec']['ram'] %>GB</td>

@@ -278,7 +278,8 @@ get '/' do
         humanReadableSize: humanReadableSize,
         orderTable: $orderTable,
         modelMatch: modelMatch,
-        procMatch: procMatch
+        procMatch: procMatch,
+        didSearch: false
     }
 end
 get '/clone' do

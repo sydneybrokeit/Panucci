@@ -4,11 +4,11 @@
 <% memMatch = true %>
 <% hddMatch = true %>
 <div class="main-specs">
-      <script type="text/javascript">
-      setTimeout(function () {
-        location.reload();
-      }, 12 * 1000);
-      </script>
+  <script type="text/javascript">
+  setTimeout(function () {
+    location.reload();
+  }, 12 * 1000);
+  </script>
     <h1 class="fa fa-desktop"></h1>
     <h1>System Information:</h1>
     <div class="inner-specs">
@@ -22,13 +22,26 @@
             <p class="model">CPU:
                 <%= sysInfo[:proc]%></p>
 
-            <% unless orderTable == {} %></br></br><p class="verification">Buildout:
-                <%= orderTable['desc']%></p>
-            <p class="verification <%= modelMatch.passfail %>">Model: <%= orderTable['model'].join(' ') %></p>
+            <% unless orderTable == {} %></br></br><p class="verification"><%= orderTable['desc']%></p>
+                  <% if  modelMatch.passfail == "FAIL"; modelIcon = "fa-times"; else; modelIcon = "fa-check"; end; %>
+                <% if  procMatch.passfail == "FAIL"; procIcon = "fa-times"; else; procIcon = "fa-check"; end; %>
+                <div class="ordertable">
+                  <div class="orderstatus">
+                    <p class="fa passfail <%= modelIcon %> <%= modelMatch.passfail %>"></p>
+            <p class="verification">Model: <%= orderTable['model'].join(' ') %></p>
+          </div>
+            <div class="orderstatus">
             <p class="verification">OS: <%= orderTable['os'] %></p>
-            <p class="verification <%= procMatch.passfail %>">Proc: <%= orderTable['proc'] %></p>
+                </div>
+              <div class="orderstatus">
+                <p class="fa passfail <%= procIcon %> <%= procMatch.passfail %>"></p>
+                            <p class="verification">Proc: <%= orderTable['proc'] %></p>
+                    </div>
+
+          </div>
             <a href="/smug" accesskey="r"></a>
               <%else%>
+              <% if didSearch == false%>
               <div class="order-button">
                 <form method="POST" action="/ordersubmit">
               <input type="text" name="orderno" placeholder="Order Number">
@@ -38,6 +51,7 @@
               </form>
             </div>
               <% end %>
+                <% end %>
         </div>
         <div class="right-specs"></div>
     </div>
