@@ -241,7 +241,7 @@ get '/' do
           modelMatch = true
         end
       else
-        if $orderTable['model']-["Laptop"].all? {|x| sysInfo[:model].include?(x)}
+        if ($orderTable['model']-["Laptop"]).all? {|x| sysInfo[:model].include?(x)}
           modelMatch = true
         end
       end
