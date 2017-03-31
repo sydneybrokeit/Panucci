@@ -10,3 +10,5 @@ doc/*.fls
 doc/*.out
 data
 config.rb
+*.lock
+*.DS_Store

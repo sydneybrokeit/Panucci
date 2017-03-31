@@ -29,7 +29,14 @@
             <p class="verification <%= procMatch.passfail %>">Proc: <%= orderTable['proc'] %></p>
             <a href="/smug" accesskey="r"></a>
               <%else%>
-              <a href="/orderrequest" class="override-button"><span>Input An Order Number</span></a>
+              <div class="order-button">
+                <form method="POST" action="/ordersubmit">
+              <input type="text" name="orderno" placeholder="Order Number">
+              <button type="submit" class="btn btn-success">
+  <i class="fa fa-search"></i>
+</button>
+              </form>
+            </div>
               <% end %>
         </div>
         <div class="right-specs"></div>
