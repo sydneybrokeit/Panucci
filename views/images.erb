@@ -17,7 +17,8 @@
         <% else %>
             <div class="manufacturer" id="<%= mfr %>" onclick="window.location = '?manufacturer=<%= mfr %>'" style="cursor: pointer;">
                 <% end %>
-                <h2 class="tab-title"><%= mfr %></h2>
+                <% unless mfr == "HP"; mfrDisp = mfr.capitalize; else; mfrDisp = mfr; end %>
+                <h2 class="tab-title"><%= mfrDisp %></h2>
             </div>
             <% end %>
         </div>
@@ -41,7 +42,7 @@
     <div class="card image" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{dir}"%>'" style="cursor: pointer;">
     <% if params["folder"]; params["folder"] = params["folder"] + dir; else; params["folder"] =  dir; end %>
         <i class="fa fa-folder-open fa-4x"></i>
-        <h2 class="image-model"><%= dir %></h2>
+        <h2 class="image-model"><%= dir.capitalize %></h2>
     </div>
     <% else %>
 <% redirect "/clone?image=#{params["manufacturer"]}/#{params["folder"]}/#{size.to_s}" %>

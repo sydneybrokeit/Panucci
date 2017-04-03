@@ -30,6 +30,7 @@ $ffRegex = /MT|DT|SFF|USFF|USDT|Laptop/
 $modelRegex = Regexp.union($ffRegex, /[0-9]/)
 $orderTable = {}
 $orderData = {}
+$ordernumber = 0
 
 def populateOrderTable(sku)
   $orderTable['sku'] = sku
@@ -210,6 +211,7 @@ post '/ordersubmit' do
   rescue Net::OpenTimeout
     retry
   end
+  $ordernumber = ordernumber
   $orderData = order.computer_kit_listing
   puts $orderData
   case
@@ -279,7 +281,8 @@ get '/' do
         orderTable: $orderTable,
         modelMatch: modelMatch,
         procMatch: procMatch,
-        didSearch: false
+        didSearch: false, #Why are we passing this this way?
+        ordernumber: $ordernumber
     }
 end
 get '/clone' do
