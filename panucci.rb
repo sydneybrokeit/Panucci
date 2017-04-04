@@ -131,7 +131,7 @@ smartSupport = system('sudo smartctl --smart=on /dev/sda')
 
 if !ENV['DEBUG']
     memTestAmt = (getFreeMemory * 0.5).floor
-    totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1024.0 / 1024
+    totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1000.0 / 1000
     totalRam = totalRam.round
     memoryStatus = Tempfile.new('memStatus')
     memoryStatus.write("Testing In Progress")
@@ -271,6 +271,7 @@ get '/' do
           fullPass = hddPass && memPass
           hddStatus.rewind
           memoryStatus.rewind
+	  puts "Printing Label"
           labelPrinted = system("ssh er2@10.0.2.143 \'printf \" Date: #{Date.today.to_s}\n HDD: #{hddStatus.read[0,4]}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\n #{fullPass ? "Tested for Full Function, R2/Ready for Reuse" : ""}\" | lpr -P Stage2\'")
           hddStatus.rewind
           memoryStatus.rewind
@@ -294,7 +295,7 @@ get '/' do
         orderTable: $orderTable,
         modelMatch: modelMatch,
         procMatch: procMatch,
-        didSearch: false, #Why are we passing this this way?
+        didSearch: false, 
         ordernumber: $ordernumber
     }
 end
