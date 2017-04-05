@@ -5,8 +5,11 @@ require 'yaml'
 require 'find'
 require 'pathname'
 
+
 load 'panucciLibs.rb'
 puts SCSERVER
+
+LOGSERVER = "harold@10.0.2.232"
 ####################################################################
 # Extend the True and False singletons to include a passfail method
 ####################################################################
@@ -130,26 +133,21 @@ smartSupport = system('sudo smartctl --smart=on /dev/sda')
 # run Conveyance SMART test
 
 if !ENV['DEBUG']
-    memTestAmt = (getFreeMemory * 0.5).floor
+    memTestAmt = (getFreeMemory * 0.01).floor
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1000.0 / 1000
     totalRam = totalRam.round
-    memoryStatus = Tempfile.new('memStatus')
-    memoryStatus.write("Testing In Progress")
-    memTestPID = fork do
+    memoryStatus = "Testing In Progress"
+    memTest = Thread.fork do
         status = system("sudo memtester #{memTestAmt} 1").passfail
-        memoryStatus.rewind
-        memoryStatus.write(status.to_s)
-        memoryStatus.truncate(status.length)
-        exit
+        memoryStatus = status
     end
 
     driveSize = `lsblk -b | grep "sda " | grep -oE '[0-9]{3,}'`.chomp.to_i
     humanReadableSize = driveSize / 1000.0 / 1000 / 1000
     humanReadableSize = SIZES.map { |x| [x, (x - humanReadableSize).abs] }.to_h.min_by { |_size, distance| distance }[0]
-    hddStatus = Tempfile.new('hddStatus')
-    hddStatus.write('Testing In Progress')
+    hddStatus = "Testing In Progress"
     if smartSupport == true
-        hddTestPID = fork do
+        hddTest = Thread.fork do
             hddTestStatus = true.passfail
             waitForShortTest = `sudo smartctl -t short /dev/sda | grep Please | sed 's/Please wait //' | sed 's/ minutes for test to complete.//'`.chomp.to_i
             sleep(150)
@@ -158,33 +156,20 @@ if !ENV['DEBUG']
             if smartShortPass == false
                 puts 'FAILED AT SHORT SELFTEST'
                 hddTestStatus = false.passfail
-                hddStatus.rewind
-                hddStatus.write(hddTestStatus)
-                hddStatus.truncate(hddTestStatus.length)
-                exit
             end
 
             selfHealthTest = `sudo smartctl -H /dev/sda | grep overall | sed 's/.*: //'`.chomp
             if selfHealthTest != 'PASSED'
                 puts 'FAILED AT HEALTH CHECK'
                 hddTestStatus = false.passfail
-                hddStatus.rewind
-                hddStatus.write(hddTestStatus)
-                hddStatus.truncate(hddTestStatus.length)
-                exit
             end
 
             seekTestResults = system('sudo seeker /dev/sda')
             if seekTestResults == false
-                hddStatus.rewind
-                hddStatus.write(false.passfail)
-                hddStatus.truncate(false.passfail.length)
+              hddTestStatus = false.passfail
             end
 
-            hddStatus.rewind
-            hddStatus.write(hddTestStatus)
-            hddStatus.truncate(hddTestStatus.length)
-            exit
+            hddStatus = hddTestStatus
         end
     else
         hddStatus.rewind
@@ -192,10 +177,8 @@ if !ENV['DEBUG']
     end
 else
     driveSize = ENV["SIZE"]
-    memoryStatus = Tempfile.new('memStatus')
-    memoryStatus.write('PASS')
-    hddStatus = Tempfile.new('hddStatus')
-    hddStatus.write('PASS')
+    memoryStatus = ('PASS')
+    hddStatus = ('PASS')
 end
 
 sysInfo = getSysInfo
@@ -237,6 +220,11 @@ get '/parseImage' do
 end
 
 get '/' do
+  hddStatusVar = "#{hddStatus}"
+  memStatusVar = "#{memoryStatus}"
+  puts "Test"
+  puts memoryStatus
+  puts hddStatus
     unless $orderTable == {}
       unless $orderTable['model'].include?("Laptop")
         if $orderTable['model'].all? {|x| sysInfo[:model].include?(x)}
@@ -251,51 +239,55 @@ get '/' do
         procMatch = true
       end
     end
-    memoryStatus.rewind
-    hddStatus.rewind
     if labelPrinted == false
-      if ["PASS", "FAIL"].include?(memoryStatus.read)
-        if ["PASS", "FAIL", "ERROR: SMART Not Supported by Drive"].include?(hddStatus.read)
-          hddStatus.rewind
-          memoryStatus.rewind
-          if ["PASS"].include?(memoryStatus.read)
+      if ["PASS", "FAIL"].include?(memStatusVar)
+        if ["PASS", "FAIL", "ERROR: SMART Not Supported by Drive"].include?(hddStatusVar)
+          puts "K, it's going..."
+          if ["PASS"].include?(memStatusVar)
             memPass = true
           else
             memPass = false
           end
-          if ["PASS"].include?(hddStatus.read)
+          if ["PASS"].include?(hddStatusVar)
             hddPass = true
           else
             hddPass =false
           end
-          fullPass = hddPass && memPass
-          hddStatus.rewind
-          memoryStatus.rewind
-	  puts "Printing Label"
-          labelPrinted = system("ssh er2@10.0.2.143 \'printf \" Date: #{Date.today.to_s}\n HDD: #{hddStatus.read[0,4]}\n RAM: #{memoryStatus.read[0,4]}\n Mfr: #{sysInfo[:mfr]}\n Model: #{sysInfo[:model]}\n Serial: #{sysInfo[:serial]}\n CPU: #{sysInfo[:proc]}\n HDD Size: #{humanReadableSize}GB\n RAM Size: #{totalRam}GB\n #{fullPass ? "Tested for Full Function, R2/Ready for Reuse" : ""}\" | lpr -P Stage2\'")
-          hddStatus.rewind
-          memoryStatus.rewind
+	         puts "Printing Label"
+           label = ""
+           label << " Date: #{Date.today.to_s}\n"
+           label << " HDD: #{hddStatus}\n"
+           label << " RAM: #{memoryStatus}\n"
+           label << " Mfr: #{sysInfo[:mfr]}\n"
+           label << " Model: #{sysInfo[:model]} #{sysInfo[:version]}\n"
+           label << " Serial: #{sysInfo[:serial]}\n"
+           label << " CPU: #{sysInfo[:proc]}\n"
+           label << " HDD Size: #{humanReadableSize}GB\n"
+           label << " RAM Size: #{totalRam}GB\n"
+           if hddPass && memPass
+             label << " Tested for Full Function, R2/Reuse"
+           end
+           puts label
+          labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]}.txt | lpr -P Stage2\'")
+
         else
-          memoryStatus.rewind
-          hddStatus.rewind
+
         end
       else
-        hddStatus.rewind
-        memoryStatus.rewind
+
       end
     end
-    hddStatus.rewind
-    memoryStatus.rewind
+
     erb :test, locals: {
         totalRam: totalRam,
-        memoryStatus: memoryStatus.read,
-        hddStatus: hddStatus.read,
+        memoryStatus: memStatusVar,
+        hddStatus: hddStatusVar,
         sysInfo: sysInfo,
         humanReadableSize: humanReadableSize,
         orderTable: $orderTable,
         modelMatch: modelMatch,
         procMatch: procMatch,
-        didSearch: false, 
+        didSearch: false,
         ordernumber: $ordernumber
     }
 end
