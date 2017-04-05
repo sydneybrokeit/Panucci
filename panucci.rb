@@ -133,7 +133,7 @@ smartSupport = system('sudo smartctl --smart=on /dev/sda')
 # run Conveyance SMART test
 
 if !ENV['DEBUG']
-    memTestAmt = (getFreeMemory * 0.01).floor
+    memTestAmt = (getFreeMemory * 0.5).floor
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1000.0 / 1000
     totalRam = totalRam.round
     memoryStatus = "Testing In Progress"
@@ -162,6 +162,10 @@ if !ENV['DEBUG']
             if selfHealthTest != 'PASSED'
                 puts 'FAILED AT HEALTH CHECK'
                 hddTestStatus = false.passfail
+            end
+
+            unless system('lsblk | grep -E "sda[1234]"')
+
             end
 
             seekTestResults = system('sudo seeker /dev/sda')
@@ -270,7 +274,7 @@ get '/' do
              label << " Order Number: #{$ordernumber}"
            end
            puts label
-          labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]} | enscript -FCourier8 -fCourier8 imageLogs/#{sysInfo[:serial]} -M Stage2 -d Stage2\'")
+          labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]} | enscript -b #{sysInfo[:serial]} -FCourier10 -fCourier8 imageLogs/#{sysInfo[:serial]} -M Stage2 -d Stage2\'")
 
         else
 
