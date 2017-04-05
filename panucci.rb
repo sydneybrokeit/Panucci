@@ -4,6 +4,7 @@ require 'dotenv/load' #used to allow configuration used environment variables or
 require 'yaml'
 require 'find'
 require 'pathname'
+require 'timeout'
 
 
 load 'panucciLibs.rb'
@@ -165,8 +166,31 @@ if !ENV['DEBUG']
             end
 
             unless system('lsblk | grep -E "sda[1234]"')
+              begin
+                Timeout::timeout(60) {
+                  writeStatus = system("sudo dd if=/dev/zero of=/dev/sda bs=64M count=16")
+                }
+              rescue Timeout::Error
+                writeStatus = false
+              end
 
+              begin
+                Timeout::timeout(60) {
+                  readStatus = system("sudo dd if=/dev/sda of=/dev/null bs=64M count=24")
+                }
+              rescue Timeout::Error
+                readStatus = false
+              end
+
+              if writeStatus == false
+                hddTestStatus = false.passfail
+              end
+              if readStatus == false
+                hddTestStatus = false.passfail
+              end
             end
+
+
 
             seekTestResults = system('sudo seeker /dev/sda')
             if seekTestResults == false
