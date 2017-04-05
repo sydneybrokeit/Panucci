@@ -260,15 +260,17 @@ get '/' do
            label << " RAM: #{memoryStatus}\n"
            label << " Mfr: #{sysInfo[:mfr]}\n"
            label << " Model: #{sysInfo[:model]} #{sysInfo[:version]}\n"
-           label << " Serial: #{sysInfo[:serial]}\n"
            label << " CPU: #{sysInfo[:proc]}\n"
            label << " HDD Size: #{humanReadableSize}GB\n"
            label << " RAM Size: #{totalRam}GB\n"
            if hddPass && memPass
              label << " Tested for Full Function, R2/Reuse"
            end
+           if $ordernumber != 0
+             label << " Order Number: #{$ordernumber}"
+           end
            puts label
-          labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]}.txt | lpr -P Stage2\'")
+          labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]} | enscript -FCourier8 -fCourier8 imageLogs/#{sysInfo[:serial]} -M Stage2 -d Stage2\'")
 
         else
 
