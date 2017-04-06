@@ -81,6 +81,7 @@ body {
     font-weight: 100;
 }
 
+
 .card {
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     flex-grow: 1;
@@ -92,6 +93,7 @@ body {
     text-align: center;
     color: #212121;
     margin-top: 25px;
+    text-decoration: none;
 }
 
 .card h2 {
@@ -349,6 +351,13 @@ pre {
     border-bottom: 10px solid #FF5722;
 }
 
+.highlightable-card{
+  width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
 .image-model {
     text-align: left;
     font-size: 45px!important;

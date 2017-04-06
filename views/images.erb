@@ -38,11 +38,11 @@
     <% if !File.exist?(ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf') %>
     <% puts ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf' %>
     <% puts "not image" %>
-    <div class="card image" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{dir}"%>'" style="cursor: pointer;">
+    <a class="card image" href="?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{dir}"%>"><div class="highlightable-card" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{dir}"%>'">
     <% if params["folder"]; params["folder"] = params["folder"] + dir; else; params["folder"] =  dir; end %>
         <i class="fa fa-folder-open fa-4x"></i>
         <h2 class="image-model"><%= dir %></h2>
-    </div>
+    </div></a>
     <% else %>
 <% redirect "/clone?image=#{params["manufacturer"]}/#{params["folder"]}/#{size.to_s}" %>
       <%end %>
