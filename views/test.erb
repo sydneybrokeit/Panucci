@@ -1,4 +1,9 @@
 <%@subtitle='/<span id="small">diagnostics</span>'%>
+  <script type="text/javascript">
+    setTimeout(function () {
+      location.reload();
+    }, 60 * 1000);
+   </script>
 <% memGood = false %>
 <% hddGood = false %>
 <% memMatch = true %>
@@ -17,7 +22,10 @@
             <p class="model">CPU:
                 <%= sysInfo[:proc]%></p>
 
-            <% unless orderTable == {} %></br></br><p class="verification"><%= orderTable['desc']%></p>
+            <% unless orderTable == {} %>
+            </br></br>
+            <p class="verification"><b>Order Number</b>: <%= ordernumber %></p></br></br>
+            <p class="verification"><%= orderTable['desc']%></p>
                   <% if  modelMatch.passfail == "FAIL"; modelIcon = "fa-times"; else; modelIcon = "fa-check"; end; %>
                 <% if  procMatch.passfail == "FAIL"; procIcon = "fa-times"; else; procIcon = "fa-check"; end; %>
                 <div class="ordertable">
@@ -108,23 +116,3 @@
     <a disabled="disabled" class="fa fa-arrow-right fa-4x success next" id="disabled"></a>
 </div>
 <% end %>
-<script type="text/javascript">
-
-  var search = document.getElementById("search");
-    setTimeout(function () {
-  if (document.getElementById("memTest") &&  document.getElementById("hddTest")){
-    console.log("should not reload");
-  }else{
-    if (search !== null && search.value === "" && search.value === " "){
-        reload();
-    }else{
-      console.log("we shall not reload");
-    }
-  }
-}, 12 * 1000);
-
-function reload(){
-  location.reload();
-}
-
-</script>
