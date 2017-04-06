@@ -42,13 +42,8 @@
     <a class="card image" href="?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{dir}"%>"><div class="highlightable-card" onClick="window.location =' ?manufacturer=<%= params[:manufacturer]%>&folder=<%="#{folder}#{dir}"%>'">
     <% if params["folder"]; params["folder"] = params["folder"] + dir; else; params["folder"] =  dir; end %>
         <i class="fa fa-folder-open fa-4x"></i>
-<<<<<<< HEAD
-        <h2 class="image-model"><%= dir %></h2>
-    </div></a>
-=======
         <h2 class="image-model"><%= dir.capitalize %></h2>
-    </div>
->>>>>>> 72d46972ba4260c168f4ef867c00ddc34669edfe
+    </div></a>
     <% else %>
 <% redirect "/clone?image=#{params["manufacturer"]}/#{params["folder"]}/#{size.to_s}" %>
       <%end %>

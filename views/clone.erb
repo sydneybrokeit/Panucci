@@ -1,21 +1,22 @@
 <% @subtitle='/<span id="small">Clone</span>'%>
 <div class="cloning">
+    <% if !imaging %>
     <% if params[:image] %>
     <h2 class="image">Chosen image:
         <%= params[:image] %></h2>
-    <% else %>
-      <h2 class="image">Windows 10?</h2>
-      <% params[:image] = "Win10" %>
+<% else %>
+    <h2 class="image">Windows 10?</h2>
+    <% params[:image] = "Win10" %>
     <% end %>
     <div class="inner-confirm" id="confirm">
 
+        <a href="/startClone?image=<%= params[:image] %>" class="button ">Yes</a>
 
-                <a href="/startClone?image=<%= params[:image] %>" class="button ">Yes</a>
-
-
-                <a href="/images" class="button destructive">No</a>
-
+        <a href="/images" class="button destructive">No</a>
 
     </div>
-
+<% else %>
+    <h1>Currently cloning image. Be patient</h1>
+    <i class="fa fa-circle-o-notch fa-4x fa-spin"></i>
+    <% end %>
 </div>

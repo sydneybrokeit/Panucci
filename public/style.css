@@ -292,6 +292,9 @@ pre {
     text-align: center;
 }
 
+.cloning .fa{
+  margin: 25px;
+}
 .inner-imaging {
     display: flex;
     opacity: 0;

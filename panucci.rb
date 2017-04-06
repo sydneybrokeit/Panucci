@@ -200,8 +200,7 @@ if !ENV['DEBUG']
             hddStatus = hddTestStatus
         end
     else
-        hddStatus.rewind
-        hddStatus.write('ERROR: SMART Not Supported by Drive')
+      hddStatus = ('ERROR: SMART Not Supported by Drive')
     end
 else
     driveSize = ENV["SIZE"]
@@ -350,10 +349,15 @@ get '/startClone' do
   image = params[:image]
   if imageStarted == false
     #To print labels.
+
     system("i3-msg layout splitv")
     imageStarted = true
     system("xterm -e \"sudo ocs-sr -g auto -e1 auto -e2 -r -j2 -scr -icds -p reboot restoredisk #{image} sda\"")
   end
+  erb :clone, locals: {
+      sysInfo: nil,
+      imaging: true
+  }
 end
 
 class Hash
