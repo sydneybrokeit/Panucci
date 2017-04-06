@@ -253,6 +253,7 @@ get '/' do
   puts memoryStatus
   puts hddStatus
     unless $orderTable == {}
+          if ($orderTable['model'])
       unless $orderTable['model'].include?("Laptop")
         if $orderTable['model'].all? {|x| sysInfo[:model].include?(x)}
           modelMatch = true
@@ -261,7 +262,10 @@ get '/' do
         if ($orderTable['model']-["Laptop"]).all? {|x| sysInfo[:model].include?(x)}
           modelMatch = true
         end
-      end
+    end
+  else
+    modelMatch = true
+  end
       if sysInfo[:proc].include?($orderTable['proc'])
         procMatch = true
       end
@@ -341,6 +345,12 @@ end
 
 get '/smugYes' do
   $orderTable = {}
+  redirect '/'
+end
+
+
+get '/clearModel' do
+  $orderTable = $orderTable.tap{|x| x.delete("model")} 
   redirect '/'
 end
 

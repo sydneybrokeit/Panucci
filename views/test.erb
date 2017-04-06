@@ -30,8 +30,8 @@
                 <% if  procMatch.passfail == "FAIL"; procIcon = "fa-times"; else; procIcon = "fa-check"; end; %>
                 <div class="ordertable">
                   <div class="orderstatus">
-                    <p class="fa passfail <%= modelIcon %> <%= modelMatch.passfail %>"></p>
-            <p class="verification">Model: <%= orderTable['model'].join(' ') %></p>
+                    <a href="/clearModel" class="fa override passfail <%= modelIcon %> <%= modelMatch.passfail %>"></a>
+            <p class="verification">Model: <% if (orderTable["model"])%> <%= orderTable['model'].join(' ') %><% else %>Not Applicable<% end %></p>
           </div>
             <div class="orderstatus">
             <p class="verification">OS: <%= orderTable['os'] %></p>

@@ -515,6 +515,10 @@ h1.black {
     border: none!important;
     padding: 0!important;
     line-height: 0.6!important;
+    text-decoration: none!important;
+}
+.override{
+  text-decoration: none!important;
 }
 
 .ordertable {
