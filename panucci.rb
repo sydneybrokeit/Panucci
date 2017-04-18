@@ -27,6 +27,7 @@ class FalseClass
     end
 end
 
+imageStarted = false
 modelMatch = false
 procMatch = false
 
@@ -326,7 +327,8 @@ get '/' do
 end
 get '/clone' do
     erb :clone, locals: {
-        sysInfo: sysInfo
+        sysInfo: sysInfo,
+	imaging: imageStarted
     }
 end
 get '/images' do
@@ -354,7 +356,6 @@ get '/clearModel' do
   redirect '/'
 end
 
-imageStarted = false
 get '/startClone' do
   image = params[:image]
   if imageStarted == false

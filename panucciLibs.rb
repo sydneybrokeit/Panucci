@@ -18,7 +18,7 @@ module Scrub
         ramQty = kit_listing[key]['components'][ram]["qtyEach"]
         totalRam = ramQty.to_i * RAMSKUS[ram]
         kit_listing[key]['spec'] = {'hdd' => HDDSKUS[hdd].to_i, 'ram' => totalRam}
-      end
+	end
       return kit_listing
     end
 
