@@ -1,3 +1,3 @@
 SCSERVER = "http://tt.ws.sellercloud.com"
-SCUSER = "your.email@yourcompany.com"
+SCUSER = "youremail@yourcompany.com"
 SCPASSWORD = "hunter2"

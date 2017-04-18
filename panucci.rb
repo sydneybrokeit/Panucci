@@ -30,7 +30,7 @@ end
 modelMatch = false
 procMatch = false
 
-$ffRegex = /MT|DT|SFF|USFF|USDT|Laptop/
+$ffRegex = /MT|DT|SFF|USFF|USDT|Laptop|Workstation/
 $modelRegex = Regexp.union($ffRegex, /[0-9]/)
 $orderTable = {}
 $orderData = {}
