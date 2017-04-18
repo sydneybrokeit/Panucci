@@ -350,7 +350,7 @@ end
 
 
 get '/clearModel' do
-  $orderTable = $orderTable.tap{|x| x.delete("model")} 
+  $orderTable = $orderTable.tap{|x| x.delete("model")}
   redirect '/'
 end
 

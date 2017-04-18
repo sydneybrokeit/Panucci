@@ -1,4 +1,7 @@
 \documentclass{article}
+\usepackage[scaled]{helvet}
+\renewcommand\familydefault{\sfdefault}
+\usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
 \usepackage{outlines}
@@ -6,266 +9,60 @@
 \usepackage{spverbatim}
 \usepackage{hyperref}
 
-\def\code#1{\texttt{#1}}
 
 \setlength{\parindent}{4em}
 \setlength{\parskip}{1em}
+
 \begin{document}
 \title{Using Panucci}
 \maketitle
 \begin{flushleft}
-\section{What is Panucci}
-
-
-Panucci is a network-based system testing and imaging platform.\linebreak\linebreak
-Panucci is a collection of multiple open-source and free software packages, custom built for our particular use case - multiple images going onto multiple computers at once.\pagebreak
-
-\section{Installing Panucci}
-The simplest way to set up Panucci is to use Ubuntu Server and DRBL (Diskless Remote Boot for Linux).  A standard PXE environment is also viable, but is outside the scope of this document.  If you will be installing Panucci on a standard PXE environment, skip to the appropriate section.
-\subsection{Overview of requirements}
-\begin{outline}
-  \1 PXE Server
-\2 Tested using Ubuntu Server and DRLB (Diskless Remote Boot for Linux)
-\2 Any PXE server will work
-  \1 NFS server (for images)\linebreak\textbf{Note}: Using DRBL will place the NFS server on the same machine as the PXE server.
-  \1 Software required on the PXE image
-\2 Linux
-\2 Ruby
-  \3 Sinatra gem
-  \3 dotenv gem
-\2 A web browser
-  \3 Chromium (tested)
-  \3 Firefox (untested, but should work)
-\2 emtester
-\2 Clonezilla
-\2 NFS (for images)
-\2 dmidecode
-\2 sudo
-\2 smartmontools (specifically, \code{smartctl})
-\2 seeker (a small utility used to test seek time on drive)
-\2 i3 Window Manager (this can be swapped out)
-\2 xterm (this can be swapped out)
-\2 rerun (this can be left out, follow notes for that case)
-\end{outline}\pagebreak
-
-\section{Hardware}
-The hardware requirements for Panucci are meager, but better hardware, especially networking and storage, will greatly improve the performance of the platform.  While there are no defined minimums, standard server hardware serves as a solid starting point.
-\subsection{Storage}
-Many computer images require between 20 and 40GB of storage per image.  While Panucci is able to handle multiple images for a single device line with little overhead over the original image, the storage requirements can quickly become cumbersome without proper planning.
-
-\subsubsection{Storage Space}
-To calculate the amount of storage needed to comfortably serve your entire line, calculate the maximum expected size of each image (in this example, 40GB) and multiply it by the number of product lines you expect to carry.
-\begin{center}
-(40GB) * (40 lines) = \textbf{1.6TB} of total storage
-\end{center}
-As an added buffer, it is recommended to add an additional 25\% to the pool to account for new product lines in the future.
-\subsubsection{Storage Speed}
-Storage speed requirements will vary based on the number of devices you will be imaging simultaneously.
-To determine speed requirement, multiply the number of machines you expect to image simultaneously by the expected ``pull speed".  If you will be using gigabit network connections (which is the limit of most current hardware), figure on approximately 115MB/s per unit.
-\begin{center}
-  (16 simultaneous units) * (115MB/s per unit) = \textbf{1840MB/s}
-\end{center}
-This number assumes that all units will be ``pulling" at their network-limited speed of 115MB/s, which many devices simply will not be capable of, so there is already some degree of building for growth included.\linebreak
-Additionally, the calculated number is the theoretical threshold to have all units imaging at full speed.  If a lower speed to image is acceptable, lowering the access speed is a valid step to reduce implementation costs.\linebreak\linebreak
-\subsubsection{Recommendations}
-There are some standard methods to help improve your storage for Panucci.
-\begin{itemize}
-  \item Consider using RAID (especially RAID 1+0).  Properly configured, RAID can offer significant performance and resiliency advantages.  If hardware RAID is not available, LVM or software RAID are viable alternatives, but you will see a performance hit from their use.  Keep in mind that using RAID levels other than RAID 0 will necessarily reduce usable space, but are much more reliable and fault-tolerant.  \textbf{Due to the high risk of data loss, using RAID 0 alone is not recommended under any circumstance.}
-  \item Consider splitting out the drives by use.  In a multi-array or multi-drive environment, place machine images onto one array or drive (usually as \code{/home/partimag}) and place the core operating system on another array or drive.
-  \item Consider using Solid State Drives (SSDs) or SAS drives.  Both provide a performance gain over traditional SATA drives.  SSDs are more expensive per unit of storage, but are usually the fastest option available.  SAS drives offer more storage, but are slower.
-\end{itemize}
-\subsection{Network}
-Given that Panucci is a network-based imaging platform, it makes sense that it is heavily network-bound.
-\subsubsection{Network Ports}
-Ideally, each client machine will operate at the full speed of the network connection (although this is not always the case due to a number of factors).  This can simplify the network calculations if both the server and client are running the same speed (e.g., both are using gigabit ethernet).  In such instances, you will need as many network ports on the server as you wish to have simultaneous clients, plus an additional port to handle general network traffic.
-\begin{center}
-  \textbf{Example:} Gigabit to Gigabit\linebreak
-  (16 simultaneous clients) + (1 general network) = \textbf{17 total ports}
-\end{center}
-As a general rule, expect gigabit ethernet on the client devices.  Given this, the calculations for higher speed network connections are relatively simple.  Keep in mind that to use a certain connection speed, all intermediate hardware must support it (e.g., plugging 8Gb fiber channels into a switch that only supports 4Gb will drop the speed to 4Gb).
-\begin{center}
-  \textbf{Example:} Servicing 16 Computers with 4Gb Fiber\linebreak
-  16 Clients = \textbf{16Gbps}\linebreak
-  16Gbps/4Gbps = \textbf{4 connections}\linebreak
-  \textbf{Result:} You will need 4x 4gbps connections to simultaneously service 16 machines, plus the connection to the outside network.
-\end{center}
-\subsubsection{Recommendations and notes}
-\begin{itemize}
-  \item When possible, offer every client the full extent of its network capabilities.  For most modern machines, this means allowing each client 1Gbps.
-  \item If providing each client its full network capacity is unfeasible, aim to minimize the reduction, as a reduction in capacity will inversely impact the imaging process (i.e., half speed means twice the time to clone an image).
-  \item If you will be using a switch, rather than direct connections, be sure to set up VLANs or similar networking partitioning methods for each port on the server.
-\end{itemize}
-
+\section{What is Panucci?}
+Panucci is a network-based testing and imaging platform, with a goal of simplifying the workflow of a computer buildout operation to make a single-piece flow viable and productive.
 \pagebreak
-\section{Infrastructure Installation Procedure}
-These steps pertain specifically to install the infrastructure supporting Panucci.  These steps will get you a working base to install Panucci on.  If you already have an NFS and PXE server, skip to ``Panucci Installation Procecdure".
-\subsection{Installing Ubuntu Server}
+\section{Intended workflow}
 \begin{enumerate}
-  \item Download the image to create Ubuntu Server install media.  Images can be found at \url{https://www.ubuntu.com/server}
-  \item Create the bootable media.  If you are unsure how, follow \href{https://www.ubuntu.com/download/desktop/create-a-usb-stick-on-windows}{these instructions using Rufus on Windows}.
-  \item Boot from the media on the device you will be using as a server.  The specifics will vary depending on the exact device being used, and are outside the scope of this document.
-  \item Follow the prompts in the Ubuntu Server installer.  It is unnecessary to select any of the package groups other than the base package and, for your optional convenience, OpenSSH (to allow remote access.)  For additional assistance installing Ubuntu Server, see \href{https://www.ubuntu.com/download/server/install-ubuntu-server}{Ubuntu's documentation}.
+  \item Gather empty units for orders
+  \item Grab a single unit
+  \item Install HDD and RAM into unit
+  \item Connect unit to server and input/output
+  \item Power on unit
+  \item Continue building and adding units as unit tests
+  \item Upon test completion, begin imaging
+  \item After imaging, verify correct boot
+  \item Send unit to shipping
 \end{enumerate}
-\subsection{Installing DRBL on Ubuntu 16.04}
-DRBL (Diskless Remote Boot for Linux) is a package designed to make PXE/diskless booting much easier.  While DRBL is not required to use Panucci, it does greatly simplify setting up the infrastructure.  Setting up PXE without DRBL is outside the scope of this document.
-\begin{enumerate}
-  \item Log in to the server and open a command line.  If you are logging in remotely using SSH, you should already have a command line open.
-  \item At the command prompt, enter the following commands to add the official Universe and Multiverse repositories:
-  \begin{spverbatim}
-sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ xenial universe multiverse"
-  \end{spverbatim}
-  \begin{spverbatim}
-sudo add-apt-repository "deb http://us.archive.ubuntu.com/ubuntu/ xenial-updates universe multiverse"
-  \end{spverbatim}
-\item Add the DRBL repositories to the APT sources.list
-  \begin{spverbatim}
-sudo sh -c 'echo "deb http://drbl.sourceforge.net/drbl-core drbl stable" >> /etc/apt/sources.list'
-  \end{spverbatim}
-\item Add the DRBL repositories GPG keys by running the following two commands:
-  \begin{spverbatim}
-wget http://drbl.sourceforge.net/GPG-KEY-DRBL
-  \end{spverbatim}
-  \begin{spverbatim}
-sudo apt-key add GPG-KEY-DRBL
-  \end{spverbatim}
-\item Update the repository listings and update the system
-  \begin{spverbatim}
-sudo apt-get update && sudo apt-get upgrade
-  \end{spverbatim}
-\item Install DRBL
-  \begin{spverbatim}
-sudo apt-get install drbl
-  \end{spverbatim}
-\end{enumerate}
-\subsection{Network Configuration}
-While many network configurations will work, this is our recommended configuration, as it's simple to generate automatically.  Feel free to customize the autogeneration script or the layout to fit your environment.\linebreak
-\textbf{Note:} Unless you are very familiar with your network environment, it is strongly recommended to make sure that all the interfaces are isolated from the rest of the network due to DHCP.
-\begin{enumerate}
-  \item List all network interfaces in the server.  Note the use of pipes in the command.  Device \code{lo} can be ignored, as it is the loopback.
-  \begin{spverbatim}
-ip link show | grep mtu | sed 's/: <..*//g' | sed 's/.*: //'
-  \end{spverbatim}
-  \item Determine which network device is the ``external" port (the one reserved for outside network access).  Remove it from the list.  The easiest way to determine this is to make sure that the only interface connected is the one you intend to use, then run \code{ifconfig} and look for the interface with an IP address.
-  \item For each network interface, define it in \code{/etc/network/interfaces} as follows:
-  \begin{spverbatim}
-auto eth2 //interface name
-iface eth2 inet static //set interface to static
-address 192.168.43.13 //set static IP address; increment the third octet (c in a.b.c.d) for each interface.  We've set the fourth octet (d) to 13, but any number should work.  If you set the interface to x.x.x.1, be sure to account for that in the DRBL configuration.
-netmask 255.255.255.0 // You can almost always leave this alone.
-  \end{spverbatim}\linebreak
-In the above example, \code{eth2} is the interface name.  \code{static} means to set a static IP address, rather than have the interface use DHCP to get an IP.
-\end{enumerate}
-\textbf{Note:} There is a network interface generation script included in the Panucci repository.  Feel free to use that if you are uncomfortable editing system configuration files by hand.  Simply run the script as root (\code{sudo ruby interfaces.rb}).
-\subsection{Configuring DRBL}
-\begin{enumerate}
-  \item Begin the DRBL setup process by running \code{sudo drblsrv -i}
-  \item \code{Do you want to install the network installation boot images so that you can let the client computer install some GNU/Linux distributions...}\linebreak\linebreak
-  Enter "N" or simply hit Enter.
-  \item \code{Do you want to use the serial console output on the client computer(s)?}\linebreak\linebreak
-  Enter "N" or simply hit Enter.
-  \item \code{Do you want to upgrade the operating system?}\linebreak\linebreak
-  It is recommended to select "No" here.
-  \item After the question about the OS upgrade, DRBL will begin pulling its dependencies.  If asked, select the newest kernel available for best hardware compatibility.
-  \item After \code{drblsrv} has completed, start the configuration process by running \code{sudo drblpush -i}
-  \begin{enumerate}
-    \item \code{Please enter the DNS domain (such as drbl.sf.net)}\linebreak\linebreak
-    Set this to whatever your preferred value is.  The default is also acceptable.
-    \item \code{Please enter NIS/YP domain name}\linebreak\linebreak
-    Leave this as default (\code{penguinzilla})
-    \item \code{Please enter the client hostname prefix}\linebreak\linebreak
-    This defaults to the server hostname (e.g., \code{ubuntu-}).  Set this as desired.
-    \item \code{Which ethernet port in this server is for public Internet access}\linebreak\linebreak
-    Select the interface you configured in your network configuration as the external interface.
-    \item \code{If you want to let the DHCP service in DRBL server offer same IP address every time...}\linebreak\linebreak
-    Select the default "no".\linebreak\linebreak
-
-    \textbf{Note:} The next four (4) steps will repeat for each interface.
-    \item \code{do you want the let the DHCP service in DRBL... This is for the clients connected to DRBL server's ethernet network interface...}\linebreak\linebreak
-    Select the default "no".
-    \item \code{What is the initial number do you want to use in the last set of digits in the IP... for DRBL clients connected to this ethernet port \$interface}\linebreak\linebreak
-    If you are following our configuration exactly, set this value to 1.  Otherwise, set it to whatever value you feel is appropriate.
-    \item \code{How many DRBL clients... connected to DRBL server's ethernet network interface \$interface?}\linebreak\linebreak
-    We've been setting this to 4, even though we will only have one machine for each port.  DRBL doesn't seem to like setting it to 1, likely due to DHCP.  Set this as appropriate.
-    \item \code{we will set the IP address for the clients connected to DRBL server's ethernet network interface \$interface as:...}\linebreak\linebreak
-    This should be correct, so accept it (hit Enter).
-    \item \code{Press Enter to continue...}\linebreak\linebreak
-    Press Enter to continue.
-    \item \code{In the system, there are 3 modes for diskless linux services... Which mode do you prefer?}\linebreak\linebreak
-    Select option \code{[1] DRBL SSI mode}.
-    \item \code{In the system, there are 4 modes available for Clonezilla... Which mode do you prefer?}\linebreak\linebreak
-    Select option \code{[1] Clonezilla box mode}.  This will set the clients up with NFS-based image storage quickly and easily.
-    \item {When using clonezilla, which directory in this server you want to store the saved image...}\linebreak\linebreak
-    The default option of \code{/home/partimag} is sane.  Do not change without good reason.
-    \item \code{If there is a local harddrive with swap partition or writable file system... do you want to use that swap partition?}\linebreak\linebreak
-    Change to "no".
-    \item \code{Which mode to you want the clients to use after they boot?}\linebreak\linebreak
-    Select option \code{"1": graphic mode (X window system)}
-    \item \code{Which mode do you want when client boots in graphic mode?}\linebreak\linebreak
-    Select option \code{[0] normal login}.
-    \item \code{Do you want to set the root's password for clients instead of using the same root's password copied from server?}\linebreak\linebreak
-    This is up to you.  We've not enabled it on our configuration.  Default is "no"
-    \item \code{do you want to set the pxelinux password for clients so that when client boots, a password must be entered to startup?}\linebreak\linebreak
-    This is up to you.  We've not enabled it on our configuration.  Default is "no".
-    \item \code{Do you want to set the boot prompt for clients?}\linebreak\linebreak
-    Select default "yes".
-    \item \code{How many 1/10 ssec is the boot prompt timeout for clients?}\linebreak\linebreak
-    Default is 70, but lower values are fine to reduce boot time.
-    \item \code{Do you want to use graphic background for PXE menu when client boots?}\linebreak\linebreak
-    The default is "yes", but either option works fine.
-    \item \code{Do you want to let audio, cdrom, floppy, video, and plugdev (like USB device) open to all users in the DRBL client?}\linebreak\linebreak
-    Select the default "yes".
-    \item \code{Do you want to setup public IP for clients?}\linebreak\linebreak
-    Leave this as "no" unless you know what you're doing.  This is not a supported feature from the developers of Panucci.
-    \item \code{Do you want to let DRBL clients have an option to run terminal mode?}\linebreak\linebreak
-    Leave this as "no" unless you know what you're doing.  This is not a supported feature from the developers of Panucci.
-    \item \code{Do you want to let DRBL server act as a NAT server?}\linebreak\linebreak
-    Leave this as "yes" unless you know client machines will never need to access any external machine during the imaging process.
-    \item \code{Press Enter to continue...}\linebreak\linebreak
-    Press Enter to continue.
-    \item \code{Warning!  If you go on, your firewall rules will be overwritten during the setup!}\linebreak\linebreak
-    Select default of "yes".
-  \end{enumerate}
-  Fortunately, that's the last step, because we've run out of letters in LaTeX.
-\end{enumerate}
-\subsection{Installing Required Software in Ubuntu 16.04 LTS}
-These are the software requirements in general.  If you are using another environment, translate these instructions to your environment.
-\subsubsection{git}
-Panucci is available from GitHub, and to keep up to date with the latest versions of Panucci, it's recommended that you clone it using git.  Git can be installed by running \code{sudo apt-get install git}.
-\subsubsection{Ruby}
-Ruby is used to glue all the parts of Panucci together.  It forms the core logic of the platform.  To install Ruby, run \code{sudo apt-get install ruby}.
-\subsubsection{Sinatra}
-Sinatra is a Ruby gem that creates a small web server designed to work with simple Ruby web applications.  To install it, run \code{sudo gem install sinatra}.
-\subsubsection{dotenv}
-dotenv is a Ruby gem used to define certain parameters outside the script.  To install dotenv, run \code{sudo gem install dotenv}.
-\subsubsection{Chromium}
-Chromium is a standards-compliant, open source web browser.  Other browsers can be used with minor modifications, but we selected Chromium on our build because of its overall usefulness.  To install it, run \code{sudo apt-get install chromium-browser}.
-\subsubsection{i3}
-The i3 Window Manager (i3wm) is a lightweight, configurable window manager for Linux and other Unix-like systems.  Alternatives can be used, but i3 was chosen for its light weight and simple configuration.  to install it, run \code{sudo apt-get install i3}.\linebreak\linebreak
-Sensible alternatives include:
+\pagebreak
+\section{Features}
 \begin{itemize}
-  \item OpenBox
-  \item i3-gaps
-  \item xmonad
+  \item Single workflow for all units
+  \item Built-in partitioning and image creation
+  \item Software allows for adding modular hardware
+  \item HDD Testing (using \verb|smartctl| and \verb|seeker|)
+  \begin{itemize}
+    \item Linear Write Speed
+    \item Linear Read Speed
+    \item SMART Short Self-Test
+    \item SMART Health Check
+    \item Random Seek Test
+  \end{itemize}
+  \item RAM testing using \verb|memtester|
+  \item Automatic integration with SellerCloud using the \verb|ScrubDeku| gem
+  \item Support for label printing
+  \item Basic logging, with upcoming support for a database logging system
+  \item Used with \verb|Seymour|, a script for creating a full image tree off of one image
+  \item Simple interface built on CSS and HTML, allowing easy modification and updating
 \end{itemize}
-\subsubsection{GDM}
-GDM (Gnome Display Manager) is a common display manager used in Linux.  When using Panucci, it's used in place of a standard xinit to help resolve certain booting issues.  To install GDM, run \code{sudo apt-get install gdm}.  It will pull in many dependencies, so be aware of that.
-\subsubsection{dmidecode}
-dmidecode is a utility used to get system-level information such as unit serial number, manufacturer, and model.  To install it, run \code{sudo apt-get install dmidecode}.
-\subsubsection{smartmontools}
-Smartmontools, specifically \code{smartctl}, is a set of utilities for accessing and using the S.M.A.R.T. reporting and testing functionality on practically all modern hard drives and solid state drives.  To install it, run \code{sudo apt-get install smartmontools}.
-\subsubsection{memtester}
-memtester is a utility used to perform advanced pattern tests on RAM.  To install it, run \code{sudo apt-get install memtester}.
-\subsubsection{Seeker}
-Seeker is a small utility, written in C, to test drive random seek functionality.  To install it:
-\begin{enumerate}
-  \item Install the tools required for compiling C code.\linebreak\linebreak
-  \code{sudo apt-get install build-essential checkinstall}
-  \item Download the source for seeker.\linebreak\linebreak
-  \code{wget http://linuxinsight.com/sites/default/files/seeker.c}
-  \item Compile seeker.\linebreak\linebreak
-  \code{gcc seeker.c -o seeker}
-  \item Install seeker to a directory in PATH.\linebreak\linebreak
-  \code{sudo cp seeker /usr/sbin/seeker}
-\end{enumerate}
+\pagebreak
+\section{Basic Use}
+This section assumes you have already created a working PXE server for Panucci, and are able to boot into it.  See document "Creating A PXE Server" for information on this.  These instructions assume your existing setup followed the same basic setup as that detailed in "Creating a PXE Server".
+\subsection{Starting the server}
+The server for Panucci can simply be powered on.  As long as there are no errors, it will automatically begin serving up the needed files.
+\subsection{Booting Panucci}
+To begin using Panucci, after building out a unit with RAM and HDD, connect it to appropriate network port and power it on.  Assuming a blank drive, network boot should be automatic as long as the unit supports it.
+\subsection{Testing in Panucci}
+Testing begins automatically on boot.  Users can monitor testing on the displayed status.
+\subsection{Order Verification}
+Panucci supports order verification using SellerCloud
 \end{flushleft}
 \end{document}
