@@ -197,7 +197,7 @@ pre {
     padding: 12px;
 }
 
-#disabled {
+.disabled {
     color: gray;
 }
 

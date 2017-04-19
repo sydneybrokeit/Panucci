@@ -5,7 +5,7 @@ require 'yaml'
 require 'find'
 require 'pathname'
 require 'timeout'
-
+require 'json'
 
 load 'panucciLibs.rb'
 puts SCSERVER
@@ -374,6 +374,15 @@ get '/startClone' do
       sysInfo: nil,
       imaging: true
   }
+end
+
+get '/status.json' do
+  content_type :json
+  if $ordernumber != 0
+    { 'hddStatus' => hddStatus, 'memoryStatus' => memoryStatus, 'orderMatch' => (procMatch && modelMatch)}.to_json
+  else
+    { 'hddStatus' => hddStatus, 'memoryStatus' => memoryStatus}.to_json
+  end
 end
 
 class Hash
