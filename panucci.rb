@@ -144,64 +144,69 @@ if !ENV['DEBUG']
         memoryStatus = status
     end
 
-    driveSize = `lsblk -b | grep "sda " | grep -oE '[0-9]{3,}'`.chomp.to_i
-    humanReadableSize = driveSize / 1000.0 / 1000 / 1000
-    humanReadableSize = SIZES.map { |x| [x, (x - humanReadableSize).abs] }.to_h.min_by { |_size, distance| distance }[0]
-    hddStatus = "Testing In Progress"
-    if smartSupport == true
-        hddTest = Thread.fork do
-            hddTestStatus = true.passfail
-            waitForShortTest = `sudo smartctl -t short /dev/sda | grep Please | sed 's/Please wait //' | sed 's/ minutes for test to complete.//'`.chomp.to_i
-            sleep(150)
-            smartShortStatus = `sudo smartctl -l selftest /dev/sda | grep Short | grep "# 1 "`
-            smartShortPass = smartShortStatus.include? 'Completed without error'
-            if smartShortPass == false
-                puts 'FAILED AT SHORT SELFTEST'
-                hddTestStatus = false.passfail
-            end
-
-            selfHealthTest = `sudo smartctl -H /dev/sda | grep overall | sed 's/.*: //'`.chomp
-            if selfHealthTest != 'PASSED'
-                puts 'FAILED AT HEALTH CHECK'
-                hddTestStatus = false.passfail
-            end
-
-            unless system('lsblk | grep -E "sda[1234]"')
-              begin
-                Timeout::timeout(60) {
-                  writeStatus = system("sudo dd if=/dev/zero of=/dev/sda bs=64M count=16")
-                }
-              rescue Timeout::Error
-                writeStatus = false
+    if system('lsblk | grep "sda "')
+      driveSize = `lsblk -b | grep "sda " | grep -oE '[0-9]{3,}'`.chomp.to_i
+      humanReadableSize = driveSize / 1000.0 / 1000 / 1000
+      humanReadableSize = SIZES.map { |x| [x, (x - humanReadableSize).abs] }.to_h.min_by { |_size, distance| distance }[0]
+      hddStatus = "Testing In Progress"
+      if smartSupport == true
+          hddTest = Thread.fork do
+              hddTestStatus = true.passfail
+              waitForShortTest = `sudo smartctl -t short /dev/sda | grep Please | sed 's/Please wait //' | sed 's/ minutes for test to complete.//'`.chomp.to_i
+              sleep(150)
+              smartShortStatus = `sudo smartctl -l selftest /dev/sda | grep Short | grep "# 1 "`
+              smartShortPass = smartShortStatus.include? 'Completed without error'
+              if smartShortPass == false
+                  puts 'FAILED AT SHORT SELFTEST'
+                  hddTestStatus = false.passfail
               end
 
-              begin
-                Timeout::timeout(60) {
-                  readStatus = system("sudo dd if=/dev/sda of=/dev/null bs=64M count=24")
-                }
-              rescue Timeout::Error
-                readStatus = false
+              selfHealthTest = `sudo smartctl -H /dev/sda | grep overall | sed 's/.*: //'`.chomp
+              if selfHealthTest != 'PASSED'
+                  puts 'FAILED AT HEALTH CHECK'
+                  hddTestStatus = false.passfail
               end
 
-              if writeStatus == false
+              unless system('lsblk | grep -E "sda[1234]"')
+                begin
+                  Timeout::timeout(60) {
+                    writeStatus = system("sudo dd if=/dev/zero of=/dev/sda bs=64M count=16")
+                  }
+                rescue Timeout::Error
+                  writeStatus = false
+                end
+
+                begin
+                  Timeout::timeout(60) {
+                    readStatus = system("sudo dd if=/dev/sda of=/dev/null bs=64M count=24")
+                  }
+                rescue Timeout::Error
+                  readStatus = false
+                end
+
+                if writeStatus == false
+                  hddTestStatus = false.passfail
+                end
+                if readStatus == false
+                  hddTestStatus = false.passfail
+                end
+              end
+
+
+
+              seekTestResults = system('sudo seeker /dev/sda')
+              if seekTestResults == false
                 hddTestStatus = false.passfail
               end
-              if readStatus == false
-                hddTestStatus = false.passfail
-              end
-            end
 
-
-
-            seekTestResults = system('sudo seeker /dev/sda')
-            if seekTestResults == false
-              hddTestStatus = false.passfail
-            end
-
-            hddStatus = hddTestStatus
-        end
+              hddStatus = hddTestStatus
+          end
+      else
+        hddStatus = ('ERROR: SMART Not Supported by Drive')
+      end
     else
-      hddStatus = ('ERROR: SMART Not Supported by Drive')
+      hddStatus = ("ERROR: No HDD Detected")
+      humanReadableSize = 0
     end
 else
     driveSize = ENV["SIZE"]
