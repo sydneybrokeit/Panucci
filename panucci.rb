@@ -379,7 +379,7 @@ end
 get '/status.json' do
   content_type :json
   if $ordernumber != 0
-    { 'hddStatus' => hddStatus, 'memoryStatus' => memoryStatus, 'orderMatch' => (procMatch && modelMatch)}.to_json
+    { 'hddStatus' => hddStatus, 'memoryStatus' => memoryStatus, 'modelMatch' => modelMatch, 'procMatch' => procMatch}.to_json
   else
     { 'hddStatus' => hddStatus, 'memoryStatus' => memoryStatus}.to_json
   end
