@@ -55,6 +55,352 @@ The purpose of this document is to give a baseline instruction set of how to bui
   \item Finish configuring \verb|pxelinux|
   \item Test and boot
 \end{enumerate}
-\
+\pagebreak
+\section{Instructions}
+\subsection{Install Ubuntu Server on machine}
+\begin{enumerate}
+  \item Download Ubuntu Server (or your Linux distribution of choice -- non-Ubuntu distributions are currently not discussed in this document, but the general steps are the same)
+
+  Ubuntu Server can be downloaded from \url{https://www.ubuntu.com/download/server}
+  \item Create install media (USB drive or CD/DVD) using the ISO
+  \item Boot the intended PXE server from the boot media
+  \item Complete the install by following the prompts
+
+  It is recommended to install the OpenSSH Server package set during installation to enable remote configuration and administration.
+
+  \item After installation is completed, reboot the server and log in.
+\end{enumerate}
+\subsection{Configuring Network}
+\begin{enumerate}
+  \item Get a list of all interfaces in the unit, using the following command
+  \begin{verbatim}
+    ip addr | grep -E "[0-9]+: " | grep -ohE ": [0-9a-z]+:" |\
+    sed -e "s/[: ]//g" | grep -v "lo"
+  \end{verbatim}
+
+  You'll receive output like this:
+  \begin{verbatim}
+    lo
+    enp134s0f0
+    enp134s0f1
+    enp135s0f0
+    enp135s0f1
+    enp138s0f0
+    enp138s0f1
+    enp139s0f0
+    enp139s0f1
+    enp1s0f0
+    enp1s0f1
+  \end{verbatim}
+
+  This is a list of all network interfaces in the machine.
+  \item Open up \verb|/etc/network/interfaces| in a text editor
+  \verb|sudo nano /etc/network/interfaces|
+\end{enumerate}
+\subsubsection{Loopback}
+The loopback device is just a testing device; its entry should always read:
+
+\begin{verbatim}
+  # The loopback network interface
+  auto lo
+  iface lo inet loopback
+\end{verbatim}
+\subsubsection{Primary Network Interface}
+For the purposes here, we'll call whichever interface we'll be using to access the outside network the 'primary' interface.  To determine which interface is your primary interface, plug in the port you want to use for outside network access and run the following:
+\begin{verbatim}
+  ifconfig
+\end{verbatim}
+If you're using DHCP, the only two interfaces that have interfaces up are \verb|lo| on 127.0.0.1 and our primary interface.
+
+\textbf{Setting automatic addresses (DHCP)}
+The code block for DHCP is pretty short, fortunately (replace eth0 with your interface):
+\begin{verbatim}
+  auto eth0
+  iface eth0 inet dhcp
+\end{verbatim}
+
+\textbf{Setting static IP}
+If you are using a static IP assignment (replace eth0 with your primary interface):
+\begin{verbatim}
+  # The primary network interface
+  auto eth0
+  iface eth0 inet static
+          address 10.0.2.240
+          netmask 255.255.255.0
+          broadcast 10.0.2.255
+          network 10.0.2.0
+          gateway 10.0.2.1
+\end{verbatim}
+
+\verb|address| should be the static IP for the interface.
+\verb|netmask| should be the octal-notation netmask.
+\verb|broadcast| should be the local broadcast IP.
+\verb|network| should be the associated network.
+\verb|gateway| should the IP of the gateway on the network
+
+\subsubsection{Setting DHCP interfaces}
+For each interface that should allow a DHCP server (replace eth1 with the interface name):
+
+\begin{verbatim}
+  auto eth1
+  iface eth inet static
+          address 192.168.135.1
+          netmask 255.255.255.0
+          broadcast 192.168.135.255
+          network 192.168.135.0
+\end{verbatim}
+
+\verb|address| should be the DHCP server IP for that interface.  Make sure that no two interfaces have the same address.
+
+\verb|netmask| should be the netmask for the DHCP range
+
+\verb|broadcast| should be the broadcast IP for the DHCP range
+
+\verb|network| should be the DHCP range's network
+
+Save the file after you've adding all interfaces
+\subsection{Configure DHCP server}
+Note: DHCP is capable of breaking a network.  Be careful while doing anything using DHCP can cause problems.
+
+\begin{enumerate}
+  \item Install isc-dhcp-server ( \verb|sudo apt-get install isc-dhcp-server| )
+  \item Open /etc/dhcp/dhcpd.conf ( \verb|sudo nano /etc/dhcp/dhcpd.conf| )
+  \item Leave the first uncommented line alone unless your environment requires it:
+  \begin{verbatim}
+    ddns-update-style none;
+  \end{verbatim}
+  \item While it's not strictly necessary, feel free to set \verb|domain-name| and \verb|domain-name-servers| for now:
+  \begin{verbatim}
+    option domain-name yourcompany.com
+    option domain-name-servers 8.8.8.8 8.8.4.4
+  \end{verbatim}
+
+  In the example above, the DNS servers are set to use Google's public DNS, but if your company requires a custom DNS, substitute it there.
+  \item Set your DHCP lease times.
+  \begin{verbatim}
+    default-lease-time 600;
+    max-lease-time 1800;
+  \end{verbatim}
+  Lease time is expressed in seconds.
+  \item For each network you attached to an interface in \verb|/etc/network/interfaces|, add the following to the end of the configuration file:
+  \begin{verbatim}
+    subnet 192.168.134.0 netmask 255.255.255.0 {
+      range 192.168.134.2 192.168.134.8;
+      option broadcast-address 192.168.134.255;
+      option routers 192.168.134.1;
+      option subnet-mask 255.255.255.0;
+      filename "pxelinux.0";
+    }
+  \end{verbatim}
+
+  \textbf{Line by line}
+  \begin{enumerate}
+    \item \verb|subnet 192.168.134.0 netmask 255.255.255.0 {|
+
+    Set the first group to the network specified in \verb|interfaces|, and the group after \verb|netmask| to the netmask specified for that network.
+    \item \verb|range 192.168.134.2 192.168.134.8;|
+
+    Set the range of the DHCP pool.  These addresses must be on the same subnet as the interface.  It's recommend to set the interface to be xxx.xxx.xxx.1, and start the range at xxx.xxx.xxx.2.
+
+    \item \verb|option broadcast-address 192.168.134.255;|
+
+    Set the broadcast of the network, in line with the one set in \verb|interfaces|.
+
+    \item \verb|option routers 192.168.134.1;|
+
+    Set the router option to the interface's IP address.
+
+    \item \verb|option subnet-mask 255.255.255.0;|
+
+    Set the netmask that DHCP devices will take from the network.
+
+    \item \verb|filename "pxelinux.0";|
+
+    Set the \verb|filename| that will be loaded during PXE boot.
+
+    \item \verb|}|
+
+    Be sure to close the bracket!
+  \end{enumerate}
+  \item Save the file (in nano, \verb|^X|)
+  \item Enable the DHCP server
+
+  \verb|sudo systemctl enable isc-dhcp-server|
+  \item Restart networking to configure interfaces
+
+  \verb|sudo /etc/init.d/networking restart|
+  \item Start the DHCP server service
+
+  \verb|sudo systemctl start isc-dhcp-server|
+\end{enumerate}
+\subsection{Configure TFTP booting}
+\begin{enumerate}
+  \item Install the TFTP server
+
+  \verb|sudo apt-get install tftpd-hpa|
+  \item Open \verb|/etc/default/tftpd-hpa|
+
+  \verb|sudo nano /etc/default/tftpd-hpa|
+
+  \item Tell the tftpd-hpa service to use \verb|/tftpboot| as its root by adding the following line:
+
+  \verb|OPTIONS="-l -s /tftpboot"|
+
+  \item Save the file.
+  \item Create \verb|/tftpboot|
+
+  \verb|sudo mkdir -p /tftpboot/pxelinux.cfg|
+
+  \item Install syslinux and pxelinux
+
+  \verb|sudo apt-get install syslinux pxelinux|
+  \item Copy pxelinux to /tftpboot
+
+  \verb|sudo cp /usr/lib/PXELINUX/pxelinux.0 /tftpboot|
+
+  \verb|sudo mkdir -p /tftpboot/boot|
+
+  \verb|sudo cp -r /usr/lib/syslinux/modules/bios /tftpboot/boot/isolinux|
+
+  \item Open the pxelinux configuration file
+
+  \verb|sudo nano /tftpboot/pxelinux.cfg/default|
+
+  \item Add the following to the (likely empty) file:
+
+  \begin{verbatim}
+    DEFAULT Linux
+
+    LABEL Linux
+    KERNEL vmlinuz-4.8.0-36-generic
+    APPEND root=/dev/nfs initrd=initrd.img-4.8.0-36-generic \
+    devfs=nomount nfsroot=10.0.2.240:/nfsroot ip=dhcp rw
+  \end{verbatim}
+
+  \textbf{Line by line}
+  \begin{enumerate}
+    \item \verb|DEFAULT Linux|
+
+    This sets the default for pxelinux to load.  Without this, it will not load correctly.  Set this to the \verb|LABEL| you set below.
+
+    \item \verb|LABEL Linux|
+
+    The name associated with the following entry.
+
+    \item \verb|KERNEL vmlinuz-4.8.0-36-generic|
+
+    This is the kernel that will be booting.  This will be corrected later.
+
+    \item \begin{verbatim}APPEND root=/dev/nfs initrd=initrd.img-4.8.0-36-generic\
+  devfs=nomount nfsroot=10.0.2.240:/nfsroot ip=dhcp rw\end{verbatim}
+
+    This tells pxelinux what the root is (using NFS for the root), which initramfs to load (this will be corrected later), what the NFS root is, and sets it for read/write and tells it the IP address will be assigned by DHCP.
+  \end{enumerate}
+  \item Save the file
+  \item Change permissions for \verb|/tftpboot|
+
+  \verb|sudo chmod -R 777 /tftpboot|
+\end{enumerate}
+\subsection{Configure NFS}
+  \begin{enumerate}
+    \item Install \verb|nfs-kernel-server|
+
+    \verb|sudo apt-get install nfs-kernel-server|
+
+    \item Create \verb|/nfsroot|
+
+    \verb|sudo mkdir /nfsroot|
+
+    \item Open \verb|/etc/exports|
+
+    \verb|sudo nano /etc/exports|
+
+    \item Add the following line:
+
+    \verb|/nfsroot 192.168.0.0/16(rw,no_root_squash,async,insecure)|
+
+    \textbf{Explanation}
+    The network should be the overall larger network (often a /16 if you're using multiple networks).
+
+    \item Save the file.
+
+    \item Start the export
+
+    \verb|sudo exportfs -rv|
+  \end{enumerate}
+\subsection{Set up NAT}
+  \begin{enumerate}
+    \item Open \verb|/etc/rc.local|
+
+    \verb|sudo nano /etc/rc.local|
+
+    \item Add the following lines to the end, just above \verb|exit 0|
+
+    \begin{verbatim}
+      /sbin/iptables -P FORWARD ACCEPT
+      /sbin/iptables -A POSTROUTING -o eth0 -j MASQUERADE --table nat   \end{verbatim}
+    Change eth0 to your primary interface.
+    \item Save the file.
+    \item Make the changes active by running the following commands:
+    \begin{verbatim}
+      sudo iptables -P FORWARD ACCEPT
+      sudo iptables -A POSTROUTING -o eth0 -j MASQUERADE --table nat
+    \end{verbatim}
+  \end{enumerate}
+\subsection{Install On Client}
+The easiest way to get a working image is to install Linux on a client machine, configure to your liking, and then copy the files to your NFS mount.
+
+\begin{enumerate}
+  \item Install according to your distribution's instructions.
+  \item On your client machine, install initramfs-tools
+
+  \verb|sudo apt-get install initramfs-tools|
+  \item Copy the client's vmlinuz to its home:
+
+  \verb|sudo cp /boot/vmlinuz-`uname -r` ~|
+
+  \item Open the initramfs tools configuration:
+
+  \verb|sudo nano /etc/initramfs-tools-initramfs.conf|
+  \item Add or change the \verb|BOOT| flag:
+
+  \verb|BOOT=nfs|
+  \item Add or change the \verb|MODULES| flag:
+
+  \verb|MODULES=netboot|
+  \item Generate a new initramfs
+
+  \verb|sudo mkinitramfs -o ~/initrd.img-`uname -r`|
+  \item Mount the NFS share on the client machine
+
+  \verb|sudo mount -t nfs 192.168.134.1:/nfsroot /mnt|
+
+  Replace the IP address above with the IP address on whatever interface the client machine is connected to.
+  \item Copy the client root to the NFS root
+
+  \verb|sudo cp -ax /. /mnt/.|
+
+  \item Power down the client (and remove the hard drive if possible)
+  \item Return to the server machine
+  \item Copy the vmlinuz and initramfs files to \verb|/tftpboot|
+
+  \verb|sudo cp /nfsroot/home/user/initrd.img-* /tftpboot/|
+
+  \verb|sudo cp /nfsroot/home/user/vmlinuz-* /tftpboot/|
+
+  In each of the above, replace \verb|user| with the user's name from the client machine.
+
+  \item Edit /tftpboot/pxelinux.cfg/default to reflect the correct filenames for \verb|vmlinuz| and \verb|initrd.img|
+
+  \item Edit the PXE client's \verb|/etc/fstab|
+  \begin{verbatim}
+    none /tmp tmpfs defaults 0 0
+    none /var/run tmpfs defaults 0 0
+    none /var/lock tmpfs defaults 0 0
+    none /var/tmp tmpfs defaults 0 0
+  \end{verbatim}
+
+  We're mounting /tmp and /var/{run, lock, tmp} as tmpfs so that they don't get sent back to the NFS mount.  This prevents issues with multiple clients.
+\end{enumerate}
 \end{flushleft}
 \end{document}
