@@ -6,11 +6,14 @@ require 'find'
 require 'pathname'
 require 'timeout'
 require 'json'
-
+require 'unirest' #allows us to log
+set :bind, '10.0.0.37'
+set :port, 3001
 load 'panucciLibs.rb'
 puts SCSERVER
 
 LOGSERVER = "harold@10.0.2.232"
+GRADESERVER = "http://localhost:3000"
 ####################################################################
 # Extend the True and False singletons to include a passfail method
 ####################################################################
@@ -36,6 +39,7 @@ $modelRegex = Regexp.union($ffRegex, /[0-9]/)
 $orderTable = {}
 $orderData = {}
 $ordernumber = 0
+
 
 def populateOrderTable(sku)
   $orderTable['sku'] = sku
@@ -328,6 +332,16 @@ get '/' do
         procMatch: procMatch,
         didSearch: false,
         ordernumber: $ordernumber
+    }
+end
+post '/clone' do
+	jsonData = params[:data]
+	response = Unirest.post GRADERSERVER, 
+                        headers:{ "Accept" => "application/json" }, 
+                        parameters:{ :machine => jsonData,  } 
+    erb :clone, locals: {
+        sysInfo: sysInfo,
+	imaging: imageStarted
     }
 end
 get '/clone' do

@@ -112,3 +112,8 @@
     <a id="proceed" disabled="disabled" href="/clone" class="disabled fa fa-arrow-right fa-4x success next"></a>
 </div>
 <% end %>
+<% jsonString = {'unit_model' => sysInfo[:model]} %>
+<form action="/clone" method="post">
+  <button type="submit" name="data" value="<%= jsonString.to_json %>" class="btn-link">Go</button>
+</form>
+
