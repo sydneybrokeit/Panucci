@@ -7,8 +7,6 @@ require 'pathname'
 require 'timeout'
 require 'json'
 require 'unirest' #allows us to log
-set :bind, '10.0.0.37'
-set :port, 3001
 load 'panucciLibs.rb'
 puts SCSERVER
 
