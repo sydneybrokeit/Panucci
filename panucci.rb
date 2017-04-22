@@ -330,17 +330,8 @@ get '/' do
         modelMatch: modelMatch,
         procMatch: procMatch,
         didSearch: false,
-        ordernumber: $ordernumber
-    }
-end
-post '/clone' do
-	@jsonData = params[:data]
-	response = Unirest.post GRADESERVER, 
-                        headers:{ "Accept" => "application/json" }, 
-                        parameters:{ :machine => @jsonData }
-    erb :clone, locals: {
-        sysInfo: sysInfo,
-	imaging: imageStarted
+        ordernumber: $ordernumber,
+        gradeServer: GRADESERVER
     }
 end
 get '/clone' do
