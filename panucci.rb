@@ -11,7 +11,7 @@ load 'panucciLibs.rb'
 puts SCSERVER
 
 LOGSERVER = "harold@10.0.2.232"
-GRADESERVER = "http://localhost:3000"
+GRADESERVER = "http://10.0.0.37:3000/machines"
 ####################################################################
 # Extend the True and False singletons to include a passfail method
 ####################################################################
@@ -121,6 +121,7 @@ def getSysInfo
     sysInfo[:model] = `sudo dmidecode --type 1 | grep "Product Name:" | sed 's/\tProduct Name: //'`.chomp
     sysInfo[:version] = `sudo dmidecode --type 1 | grep "Version:" | sed 's/\tVersion: //'`.chomp
     sysInfo[:proc] = `lscpu | grep "Model name:" | sed 's/Model name: *//'`.chomp
+    sysInfo[:isHDD] = `cat /sys/block/sda/queue/rotational`.chomp
     sysInfo
 end
 
@@ -309,7 +310,7 @@ get '/' do
              label << " Order Number: #{$ordernumber}"
            end
            puts label
-          labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]} | enscript -b #{sysInfo[:serial]} -FCourier10 -fCourier8 imageLogs/#{sysInfo[:serial]} -M Stage2 -d Stage2\'")
+         # labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]} | enscript -b #{sysInfo[:serial]} -FCourier10 -fCourier8 imageLogs/#{sysInfo[:serial]} -M Stage2 -d Stage2\'")
 
         else
 
@@ -333,10 +334,10 @@ get '/' do
     }
 end
 post '/clone' do
-	jsonData = params[:data]
-	response = Unirest.post GRADERSERVER, 
+	@jsonData = params[:data]
+	response = Unirest.post GRADESERVER, 
                         headers:{ "Accept" => "application/json" }, 
-                        parameters:{ :machine => jsonData,  } 
+                        parameters:{ :machine => @jsonData }
     erb :clone, locals: {
         sysInfo: sysInfo,
 	imaging: imageStarted

@@ -100,8 +100,10 @@
 </div>
 <% if orderTable == {} %>
   <% pass = memGood && hddGood %>
+  <%= response = Unirest.post "http://10.0.0.37:3000/machines", parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize,  :ram_pass => memGood, :hdd_pass => hddGood}} %>
 <% else %>
   <% pass = memGood && hddGood && memMatch && hddMatch && procMatch && modelMatch %>
+  <%= response = Unirest.post "http://10.0.0.37:3000/machines", parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize, :ram_pass => memGood, :hdd_pass => hddGood, :order_number => ordernumber}} %>
 <% end %>
 <% if pass %>
 <div class="next-step">
@@ -112,8 +114,8 @@
     <a id="proceed" disabled="disabled" href="/clone" class="disabled fa fa-arrow-right fa-4x success next"></a>
 </div>
 <% end %>
-<% jsonString = {'unit_model' => sysInfo[:model]} %>
-<form action="/clone" method="post">
-  <button type="submit" name="data" value="<%= jsonString.to_json %>" class="btn-link">Go</button>
-</form>
+
+
+
+            
 
