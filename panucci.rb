@@ -6,7 +6,7 @@ require 'find'
 require 'pathname'
 require 'timeout'
 require 'json'
-require 'unirest' #allows us to log
+#require 'unirest'
 load 'panucciLibs.rb'
 puts SCSERVER
 

@@ -100,10 +100,10 @@
 </div>
 <% if orderTable == {} %>
   <% pass = memGood && hddGood %>
-  <%= response = Unirest.post gradeServer, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize,  :ram_pass => memGood, :hdd_pass => hddGood}} %>
+  <% #response = Unirest.post gradeServer, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize,  :ram_pass => memGood, :hdd_pass => hddGood}} %>
 <% else %>
   <% pass = memGood && hddGood && memMatch && hddMatch && procMatch && modelMatch %>
-  <%= response = Unirest.post gradeServer, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize, :ram_pass => memGood, :hdd_pass => hddGood, :order_number => ordernumber}} %>
+  <% #response = Unirest.post gradeServer, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize, :ram_pass => memGood, :hdd_pass => hddGood, :order_number => ordernumber}} %>
 <% end %>
 <% if pass %>
 <div class="next-step">
@@ -114,8 +114,3 @@
     <a id="proceed" disabled="disabled" href="/clone" class="disabled fa fa-arrow-right fa-4x success next"></a>
 </div>
 <% end %>
-
-
-
-            
-
