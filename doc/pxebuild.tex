@@ -393,6 +393,9 @@ The easiest way to get a working image is to install Linux on a client machine, 
   \item Edit /tftpboot/pxelinux.cfg/default to reflect the correct filenames for \verb|vmlinuz| and \verb|initrd.img|
 
   \item Edit the PXE client's \verb|/etc/fstab|
+
+  \verb|sudo nano /nfsroot/etc/fstab|
+
   \begin{verbatim}
     none /tmp tmpfs defaults 0 0
     none /var/run tmpfs defaults 0 0
@@ -400,7 +403,57 @@ The easiest way to get a working image is to install Linux on a client machine, 
     none /var/tmp tmpfs defaults 0 0
   \end{verbatim}
 
-  We're mounting /tmp and /var/{run, lock, tmp} as tmpfs so that they don't get sent back to the NFS mount.  This prevents issues with multiple clients.
+   This set up mounting /tmp and /var/\verb|{run, lock, tmp}| as tmpfs so that they don't get sent back to the NFS mount.  This prevents issues with multiple clients.
+
+  \item Inside the NFS root, delete the folders we'll be mounting as tmpfs
+
+  \begin{verbatim}
+    sudo rm -fr /nfsroot/tmp
+    sudo rm -fr /nfsroot/var/run
+    sudo rm -fr /nfsroot/var/lock
+    sudo rm -fr /nfsroot/var/tmp
+  \end{verbatim}
+
+  This is necessary so that the tmpfs mount doesn't fail.  Note that in the pxelinux.cfg/default above, devfs has the \verb|nomount| option, so that the device table isn't duplicated between client machines.
+
+  \item Change the client network interface settings
+
+  \verb|sudo nano /nfsroot/etc/network/interfaces|
+
+  Change any reference to DHCP to manual.  This prevents the client machine from hanging during shutdown/reboot (the client machine will hang when an interface goes down at shutdown without this change).
+
+  \item Set manual nameservers
+
+  The change to manual interface control, instead of DHCP, leaves client without a way to automatically get DNS servers.  If the client should be able to see to the wider internet, it is recommended to set DNS servers manually.
+
+  \verb|sudo nano /etc/resolvconf/resolv.conf.d/base|
+
+  Add or edit the file to include the following lines:
+
+  \begin{verbatim}
+    nameserver 8.8.8.8
+    nameserver 8.8.4.4
+  \end{verbatim}
+
+  In the above example, the nameservers are set to Google's nameservers (8.8.8.8 and 8.8.4.4).  These are publicly accessible DNS servers that are viable for any situation, barring a specific need to set a custom DNS.
+
+\end{enumerate}
+\subsection{Restart}
+Restart the client; it should PXE boot now.  Congratulations!  You've successfully set up network booting!
+\pagebreak
+\section{Behind the Scenes}
+PXE as a standard is fairly well-defined.
+
+\begin{enumerate}
+  \item During boot, the Option ROM on the Network Interface Controller (NIC) attempts to obtain an IP address using DHCP.  Failing this step results in the machine continuing on its normal boot process.
+  \item If the DHCP lease is successful, the NIC checks for a specified bootable file.
+  \item If the bootable file specification exists, the NIC attempts to download the file using Trivial File Transfer Protocol (TFTP).
+  \item If the file is successfully downloaded, the NIC attempts to run it.
+  \item The boot file runs, loading any additional files over TFTP.
+
+  In this instance, the boot file loads a configuration, which tells it to load initrd.img and vmlinuz into memory.
+  \item The loaded files `bootstrap' the machine into working, loading a full operating system, mounting network filesystems, etc.
+  \item The client machine loads into a fully-functional copy of the boot image.
 \end{enumerate}
 \end{flushleft}
 \end{document}
