@@ -40,7 +40,7 @@ function updateStatus() {
       } else if (hddStatus == "ERROR: SMART Not Supported by Drive") {
         $("#hddTest").removeClass("fa fa-circle-o-notch fa-spin fa-3x fa-right");
         $("#hddTest").addClass("fa fa-question fa-3x failure fa-right");
-        hdComplete = true;
+        hddComplete = true;
       }
     }
 
@@ -51,11 +51,13 @@ function updateStatus() {
         if (modelStatus && procStatus) {
           $("#proceed").removeClass("disabled");
           $("#proceed").removeAttr("disabled");
+          $("#proceed").attr("href", "/clone");
         }
       } else {
       console.log("hm.");
         $("#proceed").removeClass("disabled");
         $("#proceed").removeAttr("disabled");
+        $("#proceed").attr("href", "/clone");
       }
     }
   });
