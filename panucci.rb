@@ -7,13 +7,10 @@ require 'pathname'
 require 'timeout'
 require 'unirest'
 load 'panucciLibs.rb'
-puts SCSERVER
 
 LOGSERVER = "harold@10.0.2.232"
 GRADESERVER = "http://10.0.2.232:3000/machines"
-####################################################################
-# Extend the True and False singletons to include a passfail method
-####################################################################
+
 labelPrinted = false
 load 'class_extensions.rb'
 
@@ -58,6 +55,8 @@ def populateOrderTable(sku)
   procArray.delete(procArray.find{|x| /GHz/.match(x)})
   $orderTable['proc'] = procArray.find{|x| /[0-9]{3,}/.match(x)}
 end
+
+# Create a new scrubdeku SCClient
 scclient = Scrub::SCClient.new(SCSERVER, SCUSER, SCPASSWORD)
 
 SIZES = [80, 120, 160, 250, 320, 256, 500, 1000].freeze

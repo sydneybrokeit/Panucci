@@ -1,3 +1,7 @@
+####################################################################
+# Extend the True and False singletons to include a passfail method
+####################################################################
+
 class TrueClass
     def passfail
         'PASS'
