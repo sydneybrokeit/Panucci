@@ -10,6 +10,7 @@ load 'panucciLibs.rb'
 
 LOGSERVER = "harold@10.0.2.232"
 GRADESERVER = "http://10.0.2.232:3000/machines"
+MEMTESTPCT = 50
 
 labelPrinted = false
 load 'class_extensions.rb'
@@ -71,6 +72,7 @@ def findImagesFor(manufacturer, folder, hash)
     end
     dirHash
 end
+
 #Create directory hash through iteration
 def directory_hash(path, name = nil, exclude = [])
     exclude.concat(['..', '.', '.git', '__MACOSX', '.DS_Store', '._.DS_Store', 'All'])
@@ -126,7 +128,7 @@ smartSupport = system('sudo smartctl --smart=on /dev/sda')
 # run Conveyance SMART test
 
 if !ENV['DEBUG']
-    memTestAmt = (getFreeMemory * 0.5).floor
+    memTestAmt = (getFreeMemory * (100.0/MEMTESTPCT)).floor
     totalRam = `cat /proc/meminfo | grep MemTotal | sed 's/MemTotal: *//' | sed 's/ kB//'`.chomp.to_i / 1000.0 / 1000
     totalRam = totalRam.round
     memoryStatus = "Testing In Progress"
