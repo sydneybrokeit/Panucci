@@ -5,13 +5,12 @@ require 'yaml'
 require 'find'
 require 'pathname'
 require 'timeout'
-require 'json'
-#require 'unirest'
+require 'unirest'
 load 'panucciLibs.rb'
 puts SCSERVER
 
 LOGSERVER = "harold@10.0.2.232"
-GRADESERVER = "http://10.0.0.37:3000/machines"
+GRADESERVER = "http://10.0.2.232:3000/machines"
 ####################################################################
 # Extend the True and False singletons to include a passfail method
 ####################################################################
@@ -256,8 +255,7 @@ get '/parseImage' do
 end
 
 get '/' do
-  hddStatusVar = "#{hddStatus}"
-  memStatusVar = "#{memoryStatus}"
+
   puts "Test"
   puts memoryStatus
   puts hddStatus
@@ -279,46 +277,7 @@ get '/' do
         procMatch = true
       end
     end
-    if labelPrinted == false
-      if ["PASS", "FAIL"].include?(memStatusVar)
-        if ["PASS", "FAIL", "ERROR: SMART Not Supported by Drive"].include?(hddStatusVar)
-          puts "K, it's going..."
-          if ["PASS"].include?(memStatusVar)
-            memPass = true
-          else
-            memPass = false
-          end
-          if ["PASS"].include?(hddStatusVar)
-            hddPass = true
-          else
-            hddPass =false
-          end
-	         puts "Printing Label"
-           label = ""
-           label << " Date: #{Date.today.to_s}\n"
-           label << " HDD: #{hddStatus}\n"
-           label << " RAM: #{memoryStatus}\n"
-           label << " Mfr: #{sysInfo[:mfr]}\n"
-           label << " Model: #{sysInfo[:model]} #{sysInfo[:version]}\n"
-           label << " CPU: #{sysInfo[:proc]}\n"
-           label << " HDD Size: #{humanReadableSize}GB\n"
-           label << " RAM Size: #{totalRam}GB\n"
-           if hddPass && memPass
-             label << " Tested for Full Function, R2/Reuse"
-           end
-           if $ordernumber != 0
-             label << " Order Number: #{$ordernumber}"
-           end
-           puts label
-         # labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]} | enscript -b #{sysInfo[:serial]} -FCourier10 -fCourier8 imageLogs/#{sysInfo[:serial]} -M Stage2 -d Stage2\'")
 
-        else
-
-        end
-      else
-
-      end
-    end
 
     erb :test, locals: {
         totalRam: totalRam,
@@ -380,6 +339,10 @@ get '/startClone' do
   }
 end
 
+get '/logdb' do
+  response = Unirest.post GRADESERVER, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize, :ram_pass => memoryStatus, :hdd_pass => hddStatus, :order_number => $ordernumber, :cpu_model => sysInfo[:proc]}}
+end
+
 get '/status.json' do
   content_type :json
   if $ordernumber != 0
@@ -387,6 +350,52 @@ get '/status.json' do
   else
     { 'hddStatus' => hddStatus, 'memoryStatus' => memoryStatus}.to_json
   end
+end
+
+get '/printlabel' do
+  hddStatusVar = "#{hddStatus}"
+  memStatusVar = "#{memoryStatus}"
+  if labelPrinted == false
+    if ["PASS", "FAIL"].include?(memStatusVar)
+      if ["PASS", "FAIL", "ERROR: SMART Not Supported by Drive"].include?(hddStatusVar)
+        puts "K, it's going..."
+        if ["PASS"].include?(memStatusVar)
+          memPass = true
+        else
+          memPass = false
+        end
+        if ["PASS"].include?(hddStatusVar)
+          hddPass = true
+        else
+          hddPass =false
+        end
+         puts "Printing Label"
+         label = ""
+         label << " Date: #{Date.today.to_s}\n"
+         label << " HDD: #{hddStatus}\n"
+         label << " RAM: #{memoryStatus}\n"
+         label << " Mfr: #{sysInfo[:mfr]}\n"
+         label << " Model: #{sysInfo[:model]} #{sysInfo[:version]}\n"
+         label << " CPU: #{sysInfo[:proc]}\n"
+         label << " HDD Size: #{humanReadableSize}GB\n"
+         label << " RAM Size: #{totalRam}GB\n"
+         if hddPass && memPass
+           label << " Tested for Full Function, R2/Reuse"
+         end
+         if $ordernumber != 0
+           label << " Order Number: #{$ordernumber}"
+         end
+         puts label
+         labelPrinted = system("ssh #{LOGSERVER} \'printf \"#{label}\" | tee imageLogs/#{sysInfo[:serial]} | enscript -b #{sysInfo[:serial]} -FCourier10 -fCourier8 imageLogs/#{sysInfo[:serial]} -M Stage2 -d Stage2\'")
+
+      else
+
+      end
+    else
+
+    end
+  end
+
 end
 
 class Hash

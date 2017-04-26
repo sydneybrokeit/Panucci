@@ -100,10 +100,8 @@
 </div>
 <% if orderTable == {} %>
   <% pass = memGood && hddGood %>
-  <% #response = Unirest.post gradeServer, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize,  :ram_pass => memGood, :hdd_pass => hddGood}} %>
 <% else %>
   <% pass = memGood && hddGood && memMatch && hddMatch && procMatch && modelMatch %>
-  <% #response = Unirest.post gradeServer, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize, :ram_pass => memGood, :hdd_pass => hddGood, :order_number => ordernumber}} %>
 <% end %>
 <% if pass %>
 <div class="next-step">

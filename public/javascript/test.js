@@ -44,7 +44,7 @@ function updateStatus() {
       }
     }
 
-    if (hddStatus == 'PASS' && memStatus == 'PASS') {
+    if (hddStatus == 'FAIL' && memStatus == 'PASS') {
       if (status.hasOwnProperty('modelMatch')) {
         modelStatus = status.modelMatch;
         procStatus = status.procMatch;
@@ -52,12 +52,22 @@ function updateStatus() {
           $("#proceed").removeClass("disabled");
           $("#proceed").removeAttr("disabled");
           $("#proceed").attr("href", "/clone");
+          $("#proceed").click(function() {
+            $.ajax({
+              url: "/logdb"
+            });
+          });
         }
       } else {
       console.log("hm.");
         $("#proceed").removeClass("disabled");
         $("#proceed").removeAttr("disabled");
         $("#proceed").attr("href", "/clone");
+        $("#proceed").click(function() {
+          $.ajax({
+            url: "/logdb"
+          });
+        });
       }
     }
   });
