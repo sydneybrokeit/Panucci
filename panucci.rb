@@ -15,17 +15,7 @@ GRADESERVER = "http://10.0.2.232:3000/machines"
 # Extend the True and False singletons to include a passfail method
 ####################################################################
 labelPrinted = false
-class TrueClass
-    def passfail
-        'PASS'
-    end
-end
-
-class FalseClass
-    def passfail
-        'FAIL'
-    end
-end
+load 'class_extensions.rb'
 
 imageStarted = false
 modelMatch = false
@@ -255,7 +245,8 @@ get '/parseImage' do
 end
 
 get '/' do
-
+  hddStatusVar = "#{hddStatus}"
+  memStatusVar = "#{memoryStatus}"
   puts "Test"
   puts memoryStatus
   puts hddStatus
@@ -396,16 +387,4 @@ get '/printlabel' do
     end
   end
 
-end
-
-class Hash
-    def nested_each_pair
-        each_pair do |k, v|
-            if v.is_a?(Hash)
-                v.nested_each_pair { |k, v| yield k, v }
-            else
-                yield(k, v)
-            end
-        end
-    end
 end
