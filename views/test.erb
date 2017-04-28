@@ -4,7 +4,8 @@
 <% hddGood = false %>
 <% memMatch = true %>
 <% hddMatch = true %>
-<% if didSearch == false %>
+<% if orderTable == {}%>
+<% @orderNumber = orderTable["model"]%>
     <div class="search card">
         <img src="/images/order.svg">
         <div class="specs">
@@ -17,6 +18,32 @@
 </button>
 </div>
             </form>
+        </div>
+    </div>
+
+<% else %>
+  <div class="search card">
+        <img src="/images/order.svg">
+        <div class="specs">
+            <h1>Order Requirement:</h1>
+            <p class="verification"><b>Order Number</b>: <%= ordernumber %></p>
+            <p class="verification"><%= orderTable['desc']%></p>
+                  <% if modelMatch.passfail == "FAIL"; modelIcon = "failure"; else; modelIcon = "success"; end; %>
+                <% if procMatch.passfail == "FAIL"; procIcon = "failure"; else; procIcon = "success"; end; %>
+                <div class="ordertable">
+                  <div class="orderstatus">
+                    <a href="/clearModel" class="passfail <%= modelIcon %> <%= modelMatch.passfail %>"></a>
+
+            <p>Model: <%= @orderNumber %></p>
+          </div>
+            <div class="orderstatus">
+            <a class="passfail windows"></a>
+            <p>OS: <%= orderTable['os'] %></p>
+                </div>
+              <div class="orderstatus">
+                <p class="fa passfail <%= procIcon %> <%= procMatch.passfail %>"></p>
+                            <p>Proc: <%= orderTable['proc'] %></p>
+                    </div>
         </div>
     </div>
     </div>
@@ -33,31 +60,9 @@
                 <%= sysInfo[:serial]%></p>
             <p class="model">CPU:
                 <%= sysInfo[:proc]%></p>
-
-            <% unless orderTable == {} %>
-            </br></br>
-            <p class="verification"><b>Order Number</b>: <%= ordernumber %></p></br></br>
-            <p class="verification"><%= orderTable['desc']%></p>
-                  <% if  modelMatch.passfail == "FAIL"; modelIcon = "fa-times"; else; modelIcon = "fa-check"; end; %>
-                <% if  procMatch.passfail == "FAIL"; procIcon = "fa-times"; else; procIcon = "fa-check"; end; %>
-                <div class="ordertable">
-                  <div class="orderstatus">
-                    <a href="/clearModel" class="fa override passfail <%= modelIcon %> <%= modelMatch.passfail %>"></a>
-            <p class="verification">Model: <% if (orderTable["model"])%> <%= orderTable['model'].join(' ') %><% else %>Not Applicable<% end %></p>
-          </div>
-            <div class="orderstatus">
-            <p class="verification">OS: <%= orderTable['os'] %></p>
-                </div>
-              <div class="orderstatus">
-                <p class="fa passfail <%= procIcon %> <%= procMatch.passfail %>"></p>
-                            <p class="verification">Proc: <%= orderTable['proc'] %></p>
-                    </div>
-                    <% end %>
           </div>
             <a href="/smug" accesskey="r"></a>
         </div>
-    </div>
-</div>
     <div class="harddrive card">
         <img src="/images/storage.svg">
         <div class="specs">
@@ -105,11 +110,11 @@
   <% pass = memGood && hddGood && memMatch && hddMatch && procMatch && modelMatch %>
 <% end %>
 <% if pass %>
-<div class="next-step">
+<% @otherHTML = '<div class="next-step">
     <a href="/clone" class="next"></a>
-</div>
+</div>' %>
 <% else %>
-<div class="next-step">
+<% @otherHTML = '<div class="next-step">
     <a id="proceed" disabled="disabled" class="disabled next"></a>
-</div>
+</div>' %>
 <% end %>
