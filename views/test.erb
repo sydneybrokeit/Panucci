@@ -1,14 +1,57 @@
-<%@subtitle='/<span id="small">diagnostics</span>'%>
+<%@subtitle='Diagnostics'%>
 <script src="javascript/test.js" type="text/javascript"></script>
 <% memGood = false %>
 <% hddGood = false %>
 <% memMatch = true %>
 <% hddMatch = true %>
-<div class="main-specs">
-    <h1 class="fa fa-desktop"></h1>
-    <h1>System Information:</h1>
-    <div class="inner-specs">
-        <div class="left-specs">
+<% if orderTable == {}%>
+<% @orderNumber = orderTable["model"]%>
+    <div class="search card">
+        <img src="/images/order.svg">
+        <div class="specs">
+            <h1>Order Search:</h1>
+            <div class="order-button">
+            <form method="POST" action="/ordersubmit">
+                <input id="search" type="text" name="orderno" placeholder="Order Number">
+                <button type="submit" class="btn btn-success" onclick="document.getElementById('searchButton').className = 'load fa-spin small';">
+          <div id="searchButton" class="search-button small"></div>
+</button>
+</div>
+            </form>
+        </div>
+    </div>
+
+<% else %>
+  <div class="search card">
+        <img src="/images/order.svg">
+        <div class="specs">
+            <h1>Order Requirement:</h1>
+            <p class="verification"><b>Order Number</b>: <%= ordernumber %></p>
+            <p class="verification"><%= orderTable['desc']%></p>
+                  <% if modelMatch.passfail == "FAIL"; modelIcon = "failure"; else; modelIcon = "success"; end; %>
+                <% if procMatch.passfail == "FAIL"; procIcon = "failure"; else; procIcon = "success"; end; %>
+                <div class="ordertable">
+                  <div class="orderstatus">
+                    <a href="/clearModel" class="passfail <%= modelIcon %> <%= modelMatch.passfail %>"></a>
+
+            <p>Model: <%= @orderNumber %></p>
+          </div>
+            <div class="orderstatus">
+            <a class="passfail windows"></a>
+            <p>OS: <%= orderTable['os'] %></p>
+                </div>
+              <div class="orderstatus">
+                <p class="fa passfail <%= procIcon %> <%= procMatch.passfail %>"></p>
+                            <p>Proc: <%= orderTable['proc'] %></p>
+                    </div>
+        </div>
+    </div>
+    </div>
+<% end %>
+<div class="main-specs card">
+<img src="/images/machine.svg">
+    <div class="specs">
+      <h1>Specifications:</h1>
             <p class="brand">Manufacturer:
                 <%= sysInfo[:mfr] %></p>
             <p class="model">Model:
@@ -17,47 +60,11 @@
                 <%= sysInfo[:serial]%></p>
             <p class="model">CPU:
                 <%= sysInfo[:proc]%></p>
-
-            <% unless orderTable == {} %>
-            </br></br>
-            <p class="verification"><b>Order Number</b>: <%= ordernumber %></p></br></br>
-            <p class="verification"><%= orderTable['desc']%></p>
-                  <% if  modelMatch.passfail == "FAIL"; modelIcon = "fa-times"; else; modelIcon = "fa-check"; end; %>
-                <% if  procMatch.passfail == "FAIL"; procIcon = "fa-times"; else; procIcon = "fa-check"; end; %>
-                <div class="ordertable">
-                  <div class="orderstatus">
-                    <a href="/clearModel" class="fa override passfail <%= modelIcon %> <%= modelMatch.passfail %>"></a>
-            <p class="verification">Model: <% if (orderTable["model"])%> <%= orderTable['model'].join(' ') %><% else %>Not Applicable<% end %></p>
-          </div>
-            <div class="orderstatus">
-            <p class="verification">OS: <%= orderTable['os'] %></p>
-                </div>
-              <div class="orderstatus">
-                <p class="fa passfail <%= procIcon %> <%= procMatch.passfail %>"></p>
-                            <p class="verification">Proc: <%= orderTable['proc'] %></p>
-                    </div>
-
           </div>
             <a href="/smug" accesskey="r"></a>
-              <%else%>
-              <% if didSearch == false%>
-              <div class="order-button">
-                <form method="POST" action="/ordersubmit">
-              <input id="search" type="text" name="orderno" placeholder="Order Number">
-              <button type="submit" class="btn btn-success" onclick="document.getElementById('searchbutton').className = 'fa fa-circle-o-notch fa-spin fa-3x';">
-  <i   id="searchbutton" class="fa fa-search"></i>
-</button>
-              </form>
-            </div>
-              <% end %>
-                <% end %>
         </div>
-        <div class="right-specs"></div>
-    </div>
-</div>
-<div class="subcards">
     <div class="harddrive card">
-        <i class="fa fa-hdd-o fa-5x fa-left"></i>
+        <img src="/images/storage.svg">
         <div class="specs">
             <h1>Hard Drive</h1>
             <h2 class="size">Size: <%=humanReadableSize%>GB</h2>
@@ -67,17 +74,17 @@
             <% end %>
         </div>
         <% if hddStatus.include? "FAIL" %>
-        <i id="hddTest" class="fa fa-times fa-3x failure fa-right"></i>
+         <div id="hddTest" class="failure"></div>
         <% hddGood = false %>
         <% elsif hddStatus.include? "PASS" %>
-        <i id="hddTest" class="fa fa-check fa-3x success fa-right"></i>
+        <div id="hddTest" class="success"></div>
         <% hddGood = true %>
     <% else %>
-        <i id="hddTest" class="fa fa-circle-o-notch fa-spin fa-3x fa-right"></i>
+        <div id="hddTest" class="load fa-spin"></div>
         <% end %>
     </div>
     <div class="memory card">
-        <i class="fa fa-microchip fa-5x fa-left"></i>
+        <img src="/images/memory.svg">
         <div class="specs">
             <h1>Memory</h1>
             <h2 class="size">Total RAM:
@@ -88,27 +95,26 @@
         </div>
         <% if memoryStatus.include? "FAIL" %>
         <% memGood = false %>
-        <i id="memTest" class="fa fa-times fa-3x failure fa-right"></i>
+        <div id="memTest" class="failure"></div>
         <% elsif memoryStatus.include? "PASS" %>
         <% memGood = true %>
-        <i id="memTest" class="fa fa-check fa-3x success fa-right"></i>
+        <div id="memTest" class="success"></div>
     <% else %>
-        <i id="memTest" class="fa fa-circle-o-notch fa-spin fa-3x fa-right"></i>
+        <div id="memTest" class="load fa-spin"></div>
         <% end %>
     </div>
 
-</div>
 <% if orderTable == {} %>
   <% pass = memGood && hddGood %>
 <% else %>
   <% pass = memGood && hddGood && memMatch && hddMatch && procMatch && modelMatch %>
 <% end %>
 <% if pass %>
-<div class="next-step">
-    <a href="/clone" class="fa fa-arrow-right fa-4x success next"></a>
-</div>
+<% @otherHTML = '<div class="next-step">
+    <a href="/clone" class="next"></a>
+</div>' %>
 <% else %>
-<div class="next-step">
-    <a id="proceed" disabled="disabled" class="disabled fa fa-arrow-right fa-4x success next"></a>
-</div>
+<% @otherHTML = '<div class="next-step">
+    <a id="proceed" disabled="disabled" class="disabled next"></a>
+</div>' %>
 <% end %>
