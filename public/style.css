@@ -42,7 +42,6 @@
 
 body {
     font-family: 'Roboto', sans-serif!important;
-    background-color: #fafafa;
     color: #fff;
     width: 100%;
     overflow-x: hidden;
@@ -66,24 +65,34 @@ body {
     margin-left: 25px;
 }
 
-.subcards {
-    width: 81%;
+.harddrive {
+    margin-right: 10px;
+}
+
+
+/* Card */
+
+.card .specs {
+    flex-grow: 1;
+    text-align: left;
     display: flex;
-    margin: 0 auto;
-    padding: 12px;
-    flex-wrap: wrap;
-    align-items: flex-start;
-    flex-direction: row;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
 }
 
-.card h1 {
-    margin-top: -5px;
+.card .specs h2 {
     font-weight: 100;
+    font-size: 25px;
+    flex-grow: 0;
 }
 
+.card img {
+    width: 80px;
+    margin-right: 25px;
+}
 
 .card {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
     flex-grow: 1;
     display: flex;
     align-self: flex-start;
@@ -94,6 +103,13 @@ body {
     color: #212121;
     margin-top: 25px;
     text-decoration: none;
+    border-bottom: 2px solid #607D8B;
+    width: 80%;
+}
+
+.card h1 {
+    margin-top: -5px;
+    font-weight: 100;
 }
 
 .card h2 {
@@ -107,15 +123,59 @@ body {
     font-size: 5em;
 }
 
-.harddrive {
-    margin-right: 10px;
+
+/* Icons */
+
+.success {
+    background-color: #43A047;
+    width: 100px;
+    height: 100px;
+    -webkit-mask-image: url("/images/success.svg");
+    -webkit-mask-size: cover;
 }
 
-.card .specs {
-    flex-grow: 1;
-    text-align: left;
-    padding-left: 24px;
-    padding-top: 10px;
+.failure {
+    background-color: #E53935;
+    width: 100px;
+    height: 100px;
+    -webkit-mask-image: url("/images/fail.svg");
+    -webkit-mask-size: cover;
+}
+.load{
+    background-color: black;
+    width: 100px;
+    height: 100px;
+    -webkit-mask-image: url("/images/load.svg");
+    -webkit-mask-size: cover; 
+}
+
+.next{
+    background-color: black;
+    width: 100px;
+    height: 100px;
+    -webkit-mask-image: url("/images/next.svg");
+    -webkit-mask-size: cover; 
+    display: block;
+    margin: 0 auto;
+}
+
+.question {
+    background-color: #E53935;
+    -webkit-mask-image: url("/images/question.svg");
+    -webkit-mask-size: cover;
+    width: 100px;
+    height: 100px;
+}
+
+.search-button{
+        background-color: black;
+    -webkit-mask-image: url("/images/search.svg");
+    -webkit-mask-size: cover;
+     cursor: pointer;
+}
+.small{
+      width: 30px;
+    height: 30px;
 }
 
 pre {
@@ -124,28 +184,17 @@ pre {
     animation: spin 10s linear infinite;
 }
 
-.success {
-    color: #43A047;
-}
-
-.failure {
-    color: #E53935;
-}
 
 .destructive {
     background-color: #E53935!important;
 }
 
-.main-specs h1, .main-specs p {
-    margin-left: 25px;
-    text-align: left;
-}
-
-.main-specs .left-specs p {
+.main-specs p {
     font-size: 18px;
     display: block;
     margin-left: 0;
     padding-left: 8px;
+    text-align: left;
     border-left: 5px solid #009688;
     color: #009688;
 }
@@ -158,28 +207,8 @@ pre {
     float: right;
 }
 
-.main-specs .fa {
-    font-size: 5em;
-    width: auto;
-    float: left;
-    padding: 8px;
-    margin-right: 12px;
-    margin-left: -2px;
-}
-
 .inner-specs {
     display: flex;
-}
-
-.main-specs {
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    width: 80%;
-    margin: 0 auto;
-    padding: 12px;
-    background-color: #fff;
-    margin-top: 25px;
-    text-align: center;
-    color: #212121;
 }
 
 #small {
@@ -190,12 +219,10 @@ pre {
 .next-step {
     width: 100%;
     text-align: center;
+    height: 100px;
 }
 
-.next {
-    text-decoration: none;
-    padding: 12px;
-}
+
 
 .disabled {
     color: gray;
@@ -268,8 +295,6 @@ pre {
     color: #fff;
 }
 
-.inner-confirm {}
-
 .inner-select {
     display: none;
 }
@@ -288,13 +313,15 @@ pre {
     text-decoration: none;
 }
 
-.cloning h1, p {
+.cloning h1,
+p {
     text-align: center;
 }
 
-.cloning .fa{
-  margin: 25px;
+.cloning .fa {
+    margin: 25px;
 }
+
 .inner-imaging {
     display: flex;
     opacity: 0;
@@ -354,13 +381,14 @@ pre {
     border-bottom: 10px solid #FF5722;
 }
 
-.highlightable-card{
-  width: 100%;
+.highlightable-card {
+    width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
 }
+
 .image-model {
     text-align: left;
     font-size: 45px!important;
@@ -442,8 +470,9 @@ div.order-button button {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 5px;
+    font-size: 25px;
     flex-shrink: 1;
+    margin: 25px;
 }
 
 div.order-button button:focus {
@@ -517,8 +546,9 @@ h1.black {
     line-height: 0.6!important;
     text-decoration: none!important;
 }
-.override{
-  text-decoration: none!important;
+
+.override {
+    text-decoration: none!important;
 }
 
 .ordertable {
