@@ -1,13 +1,16 @@
 <head>
     <link rel="stylesheet" type="text/css" href="style.css">
-    <link rel="stylesheet" href="fa/css/font-awesome.min.css">
     <script src="javascript/jquery.js" type="text/javascript"></script>
-    <title>Panucci</title>
+    <title>Panucci<% if @subtitle %> | <%= @subtitle %><% end %></title>
 </head>
 
 <body>
   <div class="intro-header">
-      <h1>Panucci <% if @subtitle %><%= @subtitle %><% end %></h1>
+      <h1>Panucci</h1>
+      <h2><% if @subtitle %><%= @subtitle %><% end %></h2>
+      <div class="header-other">
+      <% if @otherHTML %><%= @otherHTML %><% end%>
+      </div>
   </div>
   <div class="wrapper">
       <%= yield %>

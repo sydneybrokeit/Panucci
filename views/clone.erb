@@ -1,19 +1,20 @@
-<% @subtitle='/<span id="small">Clone</span>'%>
+<% @subtitle='Imaging'%>
 <script src="javascript/egg.js" type="text/javascript"></script>
-<div class="cloning">
+<div class="cloning card">
     <% if !imaging %>
     <% if params[:image] %>
     <h2 class="image">Chosen image:
         <%= params[:image] %></h2>
 <% else %>
-    <h2 class="image">Windows 10?</h2>
+    <div class="clone windows"></div>
+    <h2 class="image">Clone Windows 10?</h2>
     <% params[:image] = "Win10" %>
     <% end %>
     <div class="inner-confirm" id="confirm">
 
-        <a href="/startClone?image=<%= params[:image] %>" class="button ">Yes</a>
+        <a href="/startClone?image=<%= params[:image] %>" class="button yes success"></a>
 
-        <a href="/images" class="button destructive">No</a>
+        <a href="/images" class="button destructive no"></a>
 
     </div>
 <% else %>
