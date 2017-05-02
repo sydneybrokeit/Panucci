@@ -1,5 +1,6 @@
 var hddComplete = false;
 var memComplete = false;
+var printed = false;
 
 $(document).ready(function(){
   var timer = window.setInterval(updateStatus,1000);
@@ -44,7 +45,15 @@ function updateStatus() {
       }
     }
 
-    if (hddStatus == 'FAIL' && memStatus == 'PASS') {
+    if (hddComplete == true && memComplete == true && printed == false) {
+      $.ajax({
+        url: "/printlabel"
+      }).done(function() {
+        printed = true;
+      });
+    }
+
+    if (hddStatus == 'PASS' && memStatus == 'PASS') {
       if (status.hasOwnProperty('modelMatch')) {
         modelStatus = status.modelMatch;
         procStatus = status.procMatch;

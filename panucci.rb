@@ -347,8 +347,7 @@ end
 get '/printlabel' do
   hddStatusVar = "#{hddStatus}"
   memStatusVar = "#{memoryStatus}"
-  if labelPrinted == false
-    if ["PASS", "FAIL"].include?(memStatusVar)
+      if ["PASS", "FAIL"].include?(memStatusVar)
       if ["PASS", "FAIL", "ERROR: SMART Not Supported by Drive"].include?(hddStatusVar)
         puts "K, it's going..."
         if ["PASS"].include?(memStatusVar)
@@ -386,6 +385,6 @@ get '/printlabel' do
     else
 
     end
-  end
+
 
 end
