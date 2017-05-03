@@ -17,11 +17,11 @@ function updateStatus() {
     if (memComplete == false) {
       if (memStatus == 'PASS') {
         console.log("Made it into if statement");
-        $("#memTest").removeClass("fa fa-circle-o-notch fa-spin fa-3x fa-right");
+        $("#memTest").removeClass("load fa-spin");
         $("#memTest").addClass("success");
         memComplete = true;
       } else if (memStatus == 'FAIL') {
-        $("#memTest").removeClass("fa fa-circle-o-notch fa-spin fa-3x fa-right");
+        $("#memTest").removeClass("load fa-spin");
         $("#memTest").addClass("failure");
         memComplete = true;
       }
@@ -31,15 +31,15 @@ function updateStatus() {
     if (hddComplete == false) {
       if (hddStatus == 'PASS') {
         console.log("Made it into if statement");
-        $("#hddTest").removeClass("fa fa-circle-o-notch fa-spin fa-3x fa-right");
+        $("#hddTest").removeClass("load fa-spin");
         $("#hddTest").addClass("success");
         hddComplete = true;
       } else if (hddStatus == 'FAIL') {
-        $("#hddTest").removeClass("fa fa-circle-o-notch fa-spin fa-3x fa-right");
+        $("#hddTest").removeClass("load fa-spin");
         $("#hddTest").addClass("failure");
         hddComplete = true;
       } else if (hddStatus == "ERROR: SMART Not Supported by Drive") {
-        $("#hddTest").removeClass("fa fa-circle-o-notch fa-spin fa-3x fa-right");
+        $("#hddTest").removeClass("load fa-spin");
         $("#hddTest").addClass("question");
         hddComplete = true;
       }
