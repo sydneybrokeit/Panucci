@@ -118,11 +118,11 @@ body {
     background-color: #43A047;
     width: 100px;
     height: 100px;
-    -webkit-mask-image: url("/images/success.svg");
+    -webkit-mask-image: url("/images/success.svg")!important;
     -webkit-mask-size: cover;
 }
 
-.windows{
+.windows {
     width: 100px;
     height: 100px;
     -webkit-mask-image: url("/images/win.svg");
@@ -134,7 +134,7 @@ body {
     background-color: #E53935;
     width: 100px;
     height: 100px;
-    -webkit-mask-image: url("/images/fail.svg");
+    -webkit-mask-image: url("/images/fail.svg")!important;
     -webkit-mask-size: cover;
 }
 
@@ -155,9 +155,11 @@ body {
     display: block;
     margin: 0 auto;
 }
-.yes{
+
+.yes {
     background-color: #8BC34A!important;
 }
+
 .next {
     background-color: white;
     width: 100px;
@@ -237,6 +239,11 @@ pre {
 
 .disabled {
     color: gray;
+}
+.subcards{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 .fa-spin {
@@ -337,7 +344,7 @@ pre {
     -o-transition: opacity .5s linear;
 }
 
-.inner-confirm{
+.inner-confirm {
     display: flex;
     justify-content: space-around;
     align-content: center;
@@ -346,13 +353,15 @@ pre {
     width: 200px;
     margin: 0 auto;
 }
-.inner-confirm a{
+
+.inner-confirm a {
     margin: 10px;
     width: 50px;
     height: 50px;
     padding: 10px;
     -webkit-mask-size: contain!important;
 }
+
 .center {
     flex-grow: 1;
     margin: 20px;
@@ -360,24 +369,29 @@ pre {
 
 .cloning {
     border-bottom: none;
-   transform: translateY(50%);
-   display: block;
-   margin: 0 auto;
-   width: 50%;
-   text-align: center;
+    transform: translateY(50%);
+    display: block;
+    margin: 0 auto;
+    width: 50%;
+    text-align: center;
 }
-.clone{
+
+.clone {
     margin: 0 auto;
 }
-.cloning img{
+
+.cloning img {
     width: 120px;
     height: 120px;
     margin: 0;
 }
-.cloning h2{
+
+.cloning h2 {
     font-size: 30px;
     width: 100%;
 }
+
+
 /* Images Page */
 
 .manufacturers {
@@ -614,4 +628,15 @@ tr.header {
 
 .select tr:hover {
     cursor: pointer;
+}
+/* Heheh */
+
+.egg {
+    width: 10px;
+    height: 10px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    color: #f9f9f9;
+    background-color: #f9f9f9;
 }
