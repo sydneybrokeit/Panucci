@@ -2,14 +2,14 @@ var hddComplete = false;
 var memComplete = false;
 var printed = false;
 
-$(document).ready(function(){
-  var timer = window.setInterval(updateStatus,1000);
+$(document).ready(function () {
+  var timer = window.setInterval(updateStatus, 1000);
 });
 
 
 
 function updateStatus() {
-  $.getJSON("/status.json", function(status){
+  $.getJSON("/status.json", function (status) {
     var hddStatus = status.hddStatus;
     console.log("Set hddStatus");
     var memStatus = status.memoryStatus;
@@ -17,11 +17,13 @@ function updateStatus() {
     if (memComplete == false) {
       if (memStatus == 'PASS') {
         console.log("Made it into if statement");
-        $("#memTest").removeClass("load fa-spin");
+        $("#memTest").removeClass("fa-spin");
+        $("#memTest").removeClass("load");
         $("#memTest").addClass("success");
         memComplete = true;
       } else if (memStatus == 'FAIL') {
-        $("#memTest").removeClass("load fa-spin");
+        $("#memTest").removeClass("fa-spin");
+        $("#memTest").removeClass("load");
         $("#memTest").addClass("failure");
         memComplete = true;
       }
@@ -32,14 +34,17 @@ function updateStatus() {
       if (hddStatus == 'PASS') {
         console.log("Made it into if statement");
         $("#hddTest").removeClass("load fa-spin");
+        $("#hddTest").removeClass("load");
         $("#hddTest").addClass("success");
         hddComplete = true;
       } else if (hddStatus == 'FAIL') {
-        $("#hddTest").removeClass("load fa-spin");
+        $("#hddTest").removeClass("fa-spin");
+        $("#hddTest").removeClass("load");
         $("#hddTest").addClass("failure");
         hddComplete = true;
       } else if (hddStatus == "ERROR: SMART Not Supported by Drive") {
         $("#hddTest").removeClass("load fa-spin");
+        $("#hddTest").removeClass("load");
         $("#hddTest").addClass("question");
         hddComplete = true;
       }
@@ -48,7 +53,7 @@ function updateStatus() {
     if (hddComplete == true && memComplete == true && printed == false) {
       $.ajax({
         url: "/printlabel"
-      }).done(function() {
+      }).done(function () {
         printed = true;
       });
     }
@@ -61,18 +66,18 @@ function updateStatus() {
           $("#proceed").removeClass("disabled");
           $("#proceed").removeAttr("disabled");
           $("#proceed").attr("href", "/clone");
-          $("#proceed").click(function() {
+          $("#proceed").click(function () {
             $.ajax({
               url: "/logdb"
             });
           });
         }
       } else {
-      console.log("hm.");
+        console.log("hm.");
         $("#proceed").removeClass("disabled");
         $("#proceed").removeAttr("disabled");
         $("#proceed").attr("href", "/clone");
-        $("#proceed").click(function() {
+        $("#proceed").click(function () {
           $.ajax({
             url: "/logdb"
           });
