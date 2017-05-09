@@ -85,13 +85,13 @@ body {
     display: flex;
     align-self: flex-start;
     margin: 0 auto;
-    padding: 24px;
+    padding: 15px;
     background-color: #fff;
     text-align: center;
     color: #212121;
-    margin-top: 25px;
+    margin-top: 5px;
     text-decoration: none;
-    border-bottom: 2px solid #607D8B;
+    border-bottom: 2px solid #e0e7ea;
     width: 80%;
 }
 
