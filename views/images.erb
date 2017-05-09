@@ -34,7 +34,7 @@
     <% imagesList.each do |dir| %>
       <% dirs.push(dir["text"]) %>
     <% end %>
-    <% dirs.sort! %>
+    <% dirs.sort!{ |a, b| a.rjust(8, "0") <=> b.rjust(8, "0")} %>
     <% dirs.each do |dir| %>
     <% if !File.exist?(ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf') %>
     <% puts ENV['IMAGES_DIR'] + "/" + params["manufacturer"] + "/#{params["folder"]}/" + size.to_s + '/sda-pt.sf' %>
