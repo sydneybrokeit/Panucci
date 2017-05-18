@@ -6,11 +6,13 @@ require 'find'
 require 'pathname'
 require 'timeout'
 require 'unirest'
+require 'time'
 load 'panucciLibs.rb'
 
 LOGSERVER = "harold@10.0.2.232"
 GRADESERVER = "http://10.0.2.232:3000/machines"
 MEMTESTPCT = 50
+STARTTIME = Time.now
 
 labelPrinted = false
 load 'class_extensions.rb'
@@ -333,6 +335,11 @@ end
 
 get '/logdb' do
   response = Unirest.post GRADESERVER, parameters:{ :machine => {:unit_serial_number => sysInfo[:serial], :unit_model => sysInfo[:model],  :unit_mfr => sysInfo[:mfr], :ram_size => totalRam, :hdd_size => humanReadableSize, :ram_pass => memoryStatus, :hdd_pass => hddStatus, :order_number => $ordernumber, :cpu_model => sysInfo[:proc]}}
+end
+
+get '/timer' do
+  content_type :json
+  {'time' => Time.now - STARTTIME }
 end
 
 get '/status.json' do
